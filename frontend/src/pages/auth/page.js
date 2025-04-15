@@ -107,26 +107,6 @@ export default function AuthPage() {
     }
   };
 
-  // Hàm tự động điền tài khoản seller
-  const fillSellerCredentials = () => {
-    setFormData({
-      ...formData,
-      email: "user1@gmail.com",
-      password: "123123",
-    });
-    setIsLogin(true); // Chuyển sang tab đăng nhập
-  };
-
-  // Hàm tự động điền tài khoản admin
-  const fillAdminCredentials = () => {
-    setFormData({
-      ...formData,
-      email: "user4@gmail.com",
-      password: "123123",
-    });
-    setIsLogin(true); // Chuyển sang tab đăng nhập
-  };
-
   return (
     <div id="AuthPage" className="w-full min-h-screen bg-white">
       <div className="w-full flex items-center justify-center p-5 border-b-gray-300">
@@ -173,23 +153,6 @@ export default function AuthPage() {
                   placeholder="Họ và tên"
                   className="w-full p-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
-                  value={formData.fullname}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fullname: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="relative">
-                <User
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  type="text"
-                  placeholder="Tên đăng nhập"
-                  className="w-full p-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
                   value={formData.username}
                   onChange={(e) =>
                     setFormData({ ...formData, username: e.target.value })
@@ -206,7 +169,7 @@ export default function AuthPage() {
             />
             <input
               type="text" // Changed from type="email" to type="text"
-              placeholder="Email hoặc tên đăng nhập"
+              placeholder="Email"
               className="w-full p-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
               value={formData.email}
@@ -266,7 +229,18 @@ export default function AuthPage() {
                   }
                 />
               </div>
-
+              <div>
+                <input
+                  type="text"
+                  placeholder="Địa chỉ"
+                  className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                  value={formData.fullname}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullname: e.target.value })
+                  }
+                />
+              </div>
               <div>
                 <input
                   type="text"

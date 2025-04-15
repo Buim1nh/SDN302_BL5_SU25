@@ -102,14 +102,8 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists by email or username
-    const user = await User.findOne({
-      $or: [
-        { email: email },
-        { username: email } // Using email field to accept username input
-      ]
-    });
-
+    // Check if user exists
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({
         success: false,
