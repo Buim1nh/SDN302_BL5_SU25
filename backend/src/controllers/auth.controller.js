@@ -198,3 +198,167 @@ exports.logout = (req, res) => {
     message: 'Logged out successfully'
   });
 };
+
+/**
+ * Upgrade user to seller role
+ * @route POST /api/auth/upgrade-to-seller
+ * @access Private
+ */
+exports.upgradeToSeller = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Find the user
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    // Check if user is already a seller
+    if (user.role === 'seller') {
+      return res.status(400).json({
+        success: false,
+        message: 'User is already a seller'
+      });
+    }
+    
+    // Update user role to seller
+    user.role = 'seller';
+    await user.save();
+    
+    // Generate new JWT token with updated role
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+    
+    res.status(200).json({
+      success: true,
+      message: 'User upgraded to seller successfully',
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        avatarURL: user.avatarURL
+      }
+    });
+  } catch (error) {
+    logger.error('Upgrade to seller error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error upgrading user to seller',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Create a store for a seller
+ * @route POST /api/auth/create-store
+ * @access Private (Seller only)
+ */
+exports.createStore = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { storeName, description, bannerImageURL } = req.body;
+    
+    // Validate required fields
+    if (!storeName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Store name is required'
+      });
+    }
+    
+    // Check if user is a seller
+    const user = await User.findById(userId);
+    if (!user || user.role !== 'seller') {
+      return res.status(403).json({
+        success: false,
+        message: 'Only sellers can create a store'
+      });
+    }
+    
+    // Check if store already exists for this seller
+    const { Store } = require('../models');
+    const existingStore = await Store.findOne({ sellerId: userId });
+    
+    if (existingStore) {
+      return res.status(400).json({
+        success: false,
+        message: 'You already have a store'
+      });
+    }
+    
+    // Create the store
+    const store = await Store.create({
+      sellerId: userId,
+      storeName,
+      description: description || '',
+      bannerImageURL: bannerImageURL || ''
+    });
+    
+    res.status(201).json({
+      success: true,
+      message: 'Store created successfully',
+      store
+    });
+  } catch (error) {
+    logger.error('Create store error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error creating store',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get store details for a seller
+ * @route GET /api/auth/store
+ * @access Private (Seller only)
+ */
+exports.getStore = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Check if user is a seller
+    const user = await User.findById(userId);
+    if (!user || user.role !== 'seller') {
+      return res.status(403).json({
+        success: false,
+        message: 'Only sellers can access store information'
+      });
+    }
+    
+    // Get the store
+    const { Store } = require('../models');
+    const store = await Store.findOne({ sellerId: userId });
+    
+    if (!store) {
+      return res.status(404).json({
+        success: false,
+        message: 'Store not found'
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      store
+    });
+  } catch (error) {
+    logger.error('Get store error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting store information',
+      error: error.message
+    });
+  }
+};
