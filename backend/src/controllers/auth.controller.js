@@ -10,7 +10,19 @@ const logger = require('../utils/logger');
  */
 exports.register = async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { 
+      username, 
+      email, 
+      password, 
+      role, 
+      avatarURL, 
+      phone,
+      fullName,
+      street,
+      city,
+      state,
+      country
+    } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ 
@@ -33,8 +45,24 @@ exports.register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      role: role || 'buyer'
+      role: role || 'buyer',
+      avatarURL: avatarURL || ''
     });
+
+    // Create address if address fields are provided
+    if (fullName && phone && street && city && state && country) {
+      const { Address } = require('../models');
+      await Address.create({
+        userId: user._id,
+        fullName,
+        phone,
+        street,
+        city,
+        state,
+        country,
+        isDefault: true
+      });
+    }
 
     // Generate JWT token
     const token = jwt.sign(
@@ -74,8 +102,14 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
-    const user = await User.findOne({ email });
+    // Check if user exists by email or username
+    const user = await User.findOne({
+      $or: [
+        { email: email },
+        { username: email } // Using email field to accept username input
+      ]
+    });
+
     if (!user) {
       return res.status(401).json({
         success: false,
