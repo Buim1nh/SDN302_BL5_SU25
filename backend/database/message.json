@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "67fe9a3781ab555c41719892"
+  },
+  "senderId": {
+    "$oid": "67fe591581ab555c417197c1"
+  },
+  "receiverId": {
+    "$oid": "67fe591581ab555c417197bc"
+  },
+  "content": "Hello",
+  "timestamp": "2025-03-24T15:46:05.866Z"
+}]
