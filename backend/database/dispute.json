@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "67fe9c6181ab555c4171989c"
+  },
+  "orderId": {
+    "$oid": "67fe742481ab555c4171980a"
+  },
+  "raisedBy": {
+    "$oid": "67fe591581ab555c417197c1"
+  },
+  "description": "Defective product",
+  "status": "pending",
+  "resolution": "Not yet resolved"
+}]

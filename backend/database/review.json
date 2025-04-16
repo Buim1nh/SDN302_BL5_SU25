@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "67fe9b5f81ab555c41719896"
+  },
+  "productId": {
+    "$oid": "67fe6d3281ab555c417197d4"
+  },
+  "reviewerId": {
+    "$oid": "67fe591581ab555c417197c1"
+  },
+  "rating": 5,
+  "comment": "good product",
+  "createdAt": "2024-03-25T15:45:00Z"
+}]

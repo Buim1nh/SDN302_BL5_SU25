@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "67fe9a9b81ab555c41719894"
+  },
+  "orderId": {
+    "$oid": "67fe742481ab555c4171980a"
+  },
+  "carrier": "FedEx",
+  "trackingNumber": "123456789",
+  "status": "shipped",
+  "estimatedArrival": "2024-03-25T15:45:00Z"
+}]
