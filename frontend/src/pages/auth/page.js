@@ -15,6 +15,7 @@ export default function AuthPage() {
     avatarURL: "",
     phone: "",
     fullname: "",
+    fullName: "",
     street: "",
     zipcode: "",
     city: "",
@@ -45,24 +46,25 @@ export default function AuthPage() {
 
         const data = await response.json();
 
-        if (!response.ok) {
-          setError(data.message || "Email hoặc mật khẩu không đúng");
-          return;
-        }
+        if (response.ok) {
+          // Store user data and token in localStorage
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("currentUser", JSON.stringify(data.user));
 
-        // Save user data and token to localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("currentUser", JSON.stringify(data.user));
-
-        // Redirect based on user role
-        if (data.user.role === "admin") {
-          navigate("/adminDashboard");
+          // Check user role and redirect accordingly
+          if (data.user.role === "seller") {
+            navigate("/sell"); // Redirect sellers to sell page
+          } else if (data.user.role === "admin") {
+            navigate("/adminDashboard"); // Redirect admins to admin dashboard
+          } else {
+            navigate("/"); // Redirect regular users to home page
+          }
         } else {
-          navigate("/");
+          setError(data.message || "Login failed");
         }
-      } catch (err) {
-        setError("Không thể kết nối tới server");
-        console.error("Lỗi đăng nhập:", err);
+      } catch (error) {
+        console.error("Login error:", error);
+        setError("An error occurred during login");
       }
     } else {
       try {
@@ -73,16 +75,17 @@ export default function AuthPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            username: formData.username, // Now using separate username field
+            username: formData.username,
             email: formData.email,
             password: formData.password,
             role: "buyer",
             avatarURL: formData.avatarURL,
             phone: formData.phone,
-            fullName: formData.fullname,
+            fullName: formData.fullName,
+            fullname: formData.fullname,
             street: formData.street,
             city: formData.city,
-            state: formData.zipcode, // Using zipcode as state
+            state: formData.state,
             country: formData.country,
           }),
         });
@@ -150,7 +153,7 @@ export default function AuthPage() {
                 />
                 <input
                   type="text"
-                  placeholder="Họ và tên"
+                  placeholder="User name"
                   className="w-full p-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   value={formData.username}
@@ -168,7 +171,7 @@ export default function AuthPage() {
               size={20}
             />
             <input
-              type="text" // Changed from type="email" to type="text"
+              type="text"
               placeholder="Email"
               className="w-full p-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -186,7 +189,7 @@ export default function AuthPage() {
             />
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Mật khẩu"
+              placeholder="Password"
               className="w-full p-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
               value={formData.password}
@@ -208,7 +211,19 @@ export default function AuthPage() {
               <div>
                 <input
                   type="text"
-                  placeholder="Số điện thoại"
+                  placeholder="Full Name"
+                  className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                  value={formData.fullname}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullname: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="Phone"
                   className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   value={formData.phone}
@@ -221,7 +236,7 @@ export default function AuthPage() {
               <div>
                 <input
                   type="url"
-                  placeholder="URL Ảnh đại diện (tùy chọn)"
+                  placeholder="URL Avatar"
                   className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={formData.avatarURL}
                   onChange={(e) =>
@@ -232,19 +247,19 @@ export default function AuthPage() {
               <div>
                 <input
                   type="text"
-                  placeholder="Địa chỉ"
+                  placeholder="Address"
                   className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
-                  value={formData.fullname}
+                  value={formData.fullName}
                   onChange={(e) =>
-                    setFormData({ ...formData, fullname: e.target.value })
+                    setFormData({ ...formData, fullName: e.target.value })
                   }
                 />
               </div>
               <div>
                 <input
                   type="text"
-                  placeholder="Đường"
+                  placeholder="Street"
                   className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   value={formData.street}
@@ -256,19 +271,19 @@ export default function AuthPage() {
               <div>
                 <input
                   type="text"
-                  placeholder="Mã bưu điện"
+                  placeholder="State"
                   className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
-                  value={formData.zipcode}
+                  value={formData.state}
                   onChange={(e) =>
-                    setFormData({ ...formData, zipcode: e.target.value })
+                    setFormData({ ...formData, state: e.target.value })
                   }
                 />
               </div>
               <div>
                 <input
                   type="text"
-                  placeholder="Thành phố"
+                  placeholder="City"
                   className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   value={formData.city}
