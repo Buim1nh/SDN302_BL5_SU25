@@ -4,6 +4,8 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const logger = require('./utils/logger');
 const routes = require('./routes');
+const productRoutes = require('./routes/productRoutes');
+const inventoryRoutes = require("./routes/inventoryRoutes");
 
 // Load environment variables
 dotenv.config();
@@ -21,6 +23,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api', routes);
+app.use('/api/products', productRoutes);
+app.use("/api", inventoryRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

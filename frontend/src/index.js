@@ -4,14 +4,14 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ProductDetail from "./pages/product/[id]/page";
+import ProductDetail from "./pages/product/ProductDetail";
 import Cart from "./pages/cart/page";
 import Checkout from "./pages/checkout/page";
 import Orders from "./pages/orders/page";
 import ListCategory from "./pages/listCategory/page";
 import Wishlist from "./pages/wishlist/page";
 import Sell from "./pages/sell/page";
-import CreateStore from "./pages/sell/createStore";
+
 import TotalSell from "./pages/totalSell/page";
 import Success from "./pages/success/page";
 import AuthPage from "./pages/auth/page";
@@ -22,6 +22,7 @@ import SearchResults from "./pages/SearchResults/SearchResults";
 import SellerProducts from "./pages/sellerProduct/page";
 import DailyDeals from "./pages/dailyDeal/page";
 import HelpContact from "./pages/help/page";
+import ProductList from "./pages/product/ProductList";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -46,7 +47,7 @@ root.render(
         <Route path="/auction-product" element={<AuctionProductDetail />} />
         <Route path="/daily-deals" element={<DailyDeals />} />
         <Route path="/help" element={<HelpContact />} />
-        <Route path="/create-store" element={<CreateStore />} />
+        <Route path="/products" element={<ProductList />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
