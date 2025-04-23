@@ -6,7 +6,7 @@ const logger = require('./utils/logger');
 const routes = require('./routes');
 const productRoutes = require('./routes/productRoutes');
 const inventoryRoutes = require("./routes/inventoryRoutes");
-
+const messageRoutes = require("./routes/message.routes");
 // Load environment variables
 dotenv.config();
 
@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', routes);
 app.use('/api/products', productRoutes);
 app.use("/api", inventoryRoutes);
-
+app.use("/api/messages", messageRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   logger.error(err.stack);
