@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Activity from "./includes/activity";
 import Messages from "./includes/messages";
+import Coupon from "../coupon/coupon";
+import PendingOrder from "../pendingOrder/pendingOrder";
+import Shipping from "../shipping/shipping";
 import Account from "./includes/account";
 import MainHeader from "../../components/MainHeader";
 import TopMenu from "../../components/TopMenu";
@@ -39,7 +42,7 @@ const Sell = () => {
     if (!currentUser || currentUser.role === "buyer") {
       return ["Activity", ...commonTabs];
     } else {
-      return ["Activity", ...commonTabs];
+      return ["Activity", ...commonTabs, "Coupon", "Pending Order", "Shipping"];
     }
   };
 
@@ -48,6 +51,9 @@ const Sell = () => {
     Activity: <Activity userRole={currentUser?.role} />,
     Messages: <Messages />,
     Account: <Account />,
+    Coupon: <Coupon />,
+    "Pending Order": <PendingOrder />,
+    Shipping: <Shipping />,
   };
 
   // Function to handle seller registration

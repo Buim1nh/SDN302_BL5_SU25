@@ -3,15 +3,15 @@ const Schema = mongoose.Schema;
 
 const shippingInfoSchema = new Schema(
   {
-    orderId: { type: Schema.Types.ObjectId, ref: "Order", required: true },
-    carrier: { type: String, required: true },
-    trackingNumber: { type: String },
+    orderItemId: { type: Schema.Types.ObjectId, ref: "OrderItem", required: true },
+    carrier: { type: String, required: true, default: "GHTK" },
+    trackingNumber: { type: String, default: 123456789 },
     status: {
       type: String,
-      enum: ["pending", "shipped", "in_transit", "delivered"],
-      default: "pending",
+      enum: ["shipping", "shipped", "failed to ship"],
+      default: "shipping",
     },
-    estimatedArrival: { type: Date },
+    estimatedArrival: { type: Date, default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
   },
   { timestamps: true }
 );

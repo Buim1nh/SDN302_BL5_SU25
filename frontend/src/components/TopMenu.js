@@ -24,7 +24,7 @@ export default function TopMenu() {
       }
 
       try {
-        console.log("Fetching cart count for user:", currentUser.id);
+        //console.log("Fetching cart count for user:", currentUser.id);
         const response = await fetch(
           `http://localhost:9999/shoppingCart?userId=${currentUser.id}`
         );
@@ -39,12 +39,12 @@ export default function TopMenu() {
         );
         setCartCount(totalProducts);
       } catch (error) {
-        console.error("Error fetching cart count:", error);
+        //console.error("Error fetching cart count:", error);
         setCartCount(0);
       }
     };
 
-    fetchCartCount();
+    //fetchCartCount();
     const interval = setInterval(fetchCartCount, 3000);
     return () => clearInterval(interval);
   }, [currentUser]);
