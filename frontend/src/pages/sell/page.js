@@ -14,15 +14,40 @@ const Sell = () => {
   const [showSellerRegistrationModal, setShowSellerRegistrationModal] =
     useState(false);
   const [error, setError] = useState("");
+  const [store, setStore] = useState(null);
   const navigate = useNavigate();
 
-  // Get user from localStorage on component mount
+  // Get user and store data
   useEffect(() => {
-    const user = localStorage.getItem("currentUser");
-    if (user) {
-      setCurrentUser(JSON.parse(user));
-    }
-    setIsLoading(false);
+    const fetchData = async () => {
+      const user = localStorage.getItem("currentUser");
+      if (user) {
+        const parsedUser = JSON.parse(user);
+        setCurrentUser(parsedUser);
+
+        if (parsedUser.role === "seller") {
+          try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+              "http://localhost:5000/api/auth/store",
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            const data = await response.json();
+            if (response.ok) {
+              setStore(data.store);
+            }
+          } catch (error) {
+            console.error("Error fetching store:", error);
+          }
+        }
+      }
+      setIsLoading(false);
+    };
+    fetchData();
   }, []);
 
   // Redirect if not logged in
@@ -51,43 +76,8 @@ const Sell = () => {
   };
 
   // Function to handle seller registration
-  const handleSellerRegistration = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("You must be logged in to register as a seller");
-        return;
-      }
-
-      const response = await fetch(
-        "http://localhost:5000/api/auth/upgrade-to-seller",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Update the user in localStorage
-        const updatedUser = { ...currentUser, role: "seller" };
-        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-        setCurrentUser(updatedUser);
-        setShowSellerRegistrationModal(false);
-
-        // Redirect to store creation page instead of showing alert
-        navigate("/create-store");
-      } else {
-        alert(data.message || "Failed to register as seller");
-      }
-    } catch (error) {
-      console.error("Error upgrading to seller:", error);
-      alert("An error occurred. Please try again.");
-    }
+  const handleNavigateToCreateStore = () => {
+    navigate("/create-store");
   };
 
   if (isLoading) {
@@ -102,6 +92,7 @@ const Sell = () => {
     return null; // Will redirect in useEffect
   }
 
+  // Modify the seller content section
   return (
     <div id="MainLayout" className="min-w-[1050px] max-w-[1300px] mx-auto">
       {/* Header Section from MainLayout */}
@@ -120,28 +111,45 @@ const Sell = () => {
           </h1>
 
           {currentUser.role === "seller" ? (
-            // Seller content
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-700">
-                  Sản phẩm đang bán
-                </h3>
-                <p className="text-3xl font-bold mt-2">12</p>
-                <p className="text-sm text-green-600 mt-1">
-                  ↑ 3 so với tháng trước
-                </p>
-              </div>
+            store?.status === "approved" ? (
+              // Seller Dashboard content for approved sellers
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    Sản phẩm đang bán
+                  </h3>
+                  <p className="text-3xl font-bold mt-2">12</p>
+                  <p className="text-sm text-green-600 mt-1">
+                    ↑ 3 so với tháng trước
+                  </p>
+                </div>
 
-              <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-700">
-                  Tổng doanh thu
-                </h3>
-                <p className="text-3xl font-bold mt-2">$1,250.00</p>
-                <p className="text-sm text-green-600 mt-1">
-                  ↑ 15% so với tháng trước
-                </p>
+                <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    Tổng doanh thu
+                  </h3>
+                  <p className="text-3xl font-bold mt-2">$1,250.00</p>
+                  <p className="text-sm text-green-600 mt-1">
+                    ↑ 15% so với tháng trước
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              // Message for pending/rejected sellers
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+                {store?.status === "pending" ? (
+                  <p>
+                    Cửa hàng của bạn đang chờ được phê duyệt. Vui lòng đợi quản
+                    trị viên xem xét.
+                  </p>
+                ) : (
+                  <p>
+                    Yêu cầu mở cửa hàng của bạn đã bị từ chối. Vui lòng liên hệ
+                    quản trị viên để biết thêm chi tiết.
+                  </p>
+                )}
+              </div>
+            )
           ) : (
             // Buyer content - Register as Seller banner
             <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-lg shadow mb-6 text-white">
@@ -153,7 +161,7 @@ const Sell = () => {
                 bạn.
               </p>
               <button
-                onClick={() => setShowSellerRegistrationModal(true)}
+                onClick={handleNavigateToCreateStore}
                 className="bg-white text-blue-600 px-4 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors"
               >
                 Đăng ký làm người bán
@@ -228,7 +236,7 @@ const Sell = () => {
                 Hủy
               </button>
               <button
-                onClick={handleSellerRegistration}
+                onClick={handleNavigateToCreateStore}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 Xác nhận
