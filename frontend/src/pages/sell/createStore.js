@@ -35,17 +35,13 @@ const CreateStore = () => {
       navigate("/auth");
     }
   }, [navigate]);
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // In a real app, you would upload the file to a server or cloud storage
-      // For this example, we'll just use a local URL
-      const imageUrl = URL.createObjectURL(file);
-      setFormData({
-        ...formData,
-        bannerImageURL: imageUrl,
-      });
-    }
+  // Thay thế hàm handleImageUpload bằng hàm này
+  const handleImageURLChange = (e) => {
+    const { value } = e.target;
+    setFormData({
+      ...formData,
+      bannerImageURL: value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -167,42 +163,35 @@ const CreateStore = () => {
 
             <div className="mb-8">
               <label
-                htmlFor="bannerImage"
+                htmlFor="bannerImageURL"
                 className="block text-gray-700 font-medium mb-2"
               >
-                Store Banner Image
+                Store Banner Image URL
               </label>
-              <div className="flex items-center space-x-4">
-                <input
-                  type="file"
-                  id="bannerImage"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="bannerImage"
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded cursor-pointer hover:bg-gray-300"
-                >
-                  Choose Image
-                </label>
-                <span className="text-gray-500 text-sm">
-                  {formData.bannerImageURL
-                    ? "Image selected"
-                    : "No image selected"}
-                </span>
-              </div>
+              <input
+                type="url"
+                id="bannerImageURL"
+                name="bannerImageURL"
+                value={formData.bannerImageURL}
+                onChange={handleImageURLChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter image URL (e.g. https://example.com/image.jpg)"
+              />
               {formData.bannerImageURL && (
                 <div className="mt-4">
                   <img
                     src={formData.bannerImageURL}
                     alt="Store Banner Preview"
                     className="max-h-40 rounded border"
+                    onError={(e) => {
+                      e.target.src = ''; // Xóa ảnh nếu URL không hợp lệ
+                      setError("Invalid image URL");
+                    }}
                   />
                 </div>
               )}
               <p className="text-gray-500 text-sm mt-1">
-                Recommended size: 1200 x 300 pixels
+                Enter a valid image URL (e.g. https://example.com/image.jpg)
               </p>
             </div>
 
