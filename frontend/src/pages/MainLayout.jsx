@@ -1,32 +1,27 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import {
-  FiSearch,
-  FiHeart,
   FiChevronDown,
-  FiChevronRight,
   FiChevronLeft,
-  FiClock,
-  FiTag,
-  FiStar,
-  FiArrowRight,
-  FiArrowLeft,
-  FiGrid,
-  FiList,
+  FiChevronRight,
   FiFilter,
+  FiGrid,
+  FiHeart,
+  FiList,
   FiRefreshCw,
-  FiTrendingUp,
+  FiSearch,
   FiShoppingCart,
+  FiTrendingUp,
 } from "react-icons/fi";
-import { motion, AnimatePresence } from "framer-motion";
 
 // Giả định các component này đã được tạo trong dự án của bạn
-import TopMenu from "../components/TopMenu";
-import MainHeader from "../components/MainHeader";
-import SubMenu from "../components/SubMenu";
 import Footer from "../components/Footer";
+import MainHeader from "../components/MainHeader";
 import Product from "../components/Product";
+import SubMenu from "../components/SubMenu";
+import TopMenu from "../components/TopMenu";
 
 // Dữ liệu mẫu cho banner quảng cáo
 const BANNER_SLIDES = [
