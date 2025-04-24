@@ -15,22 +15,6 @@ const CreateStore = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
-  // Get user from localStorage on component mount
-  useEffect(() => {
-    const user = localStorage.getItem("currentUser");
-    if (user) {
-      const parsedUser = JSON.parse(user);
-      setCurrentUser(parsedUser);
-      
-      // If user is not a seller, redirect to sell page
-      if (parsedUser.role !== "seller") {
-        navigate("/sell");
-      }
-    } else {
-      navigate("/auth");
-    }
-  }, [navigate]);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -38,18 +22,26 @@ const CreateStore = () => {
       [name]: value,
     });
   };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // In a real app, you would upload the file to a server or cloud storage
-      // For this example, we'll just use a local URL
-      const imageUrl = URL.createObjectURL(file);
-      setFormData({
-        ...formData,
-        bannerImageURL: imageUrl,
-      });
+  useEffect(() => {
+    const user = localStorage.getItem("currentUser");
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      setCurrentUser(parsedUser);
+      // kiểm tra nếu user đã là seller thì không cho vào trang này nữa
+      if (parsedUser.role === "seller") {
+        navigate("/sell");
+      }
+    } else {
+      navigate("/auth");
     }
+  }, [navigate]);
+  // Thay thế hàm handleImageUpload bằng hàm này
+  const handleImageURLChange = (e) => {
+    const { value } = e.target;
+    setFormData({
+      ...formData,
+      bannerImageURL: value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -60,31 +52,40 @@ const CreateStore = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setError("You must be logged in to create a store");
+        setError("Bạn phải đăng nhập để tạo cửa hàng");
         setIsLoading(false);
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/auth/create-store", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/auth/create-store",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
-        // Store created successfully, redirect to seller dashboard
+        // Cập nhật thông tin người dùng trong localStorage với role mới
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const updatedUser = { ...currentUser, role: "seller" };
+        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+        localStorage.setItem("token", data.token); // Cập nhật token mới
+
+        // Chuyển hướng về trang seller dashboard
         navigate("/sell");
       } else {
-        setError(data.message || "Failed to create store");
+        setError(data.message || "Không thể tạo cửa hàng");
       }
     } catch (error) {
-      console.error("Error creating store:", error);
-      setError("An error occurred. Please try again.");
+      console.error("Lỗi khi tạo cửa hàng:", error);
+      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
@@ -102,9 +103,12 @@ const CreateStore = () => {
       {/* Main Content */}
       <div className="p-6 bg-gray-50 min-h-screen">
         <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-2xl font-bold mb-6 text-center">Create Your Store</h1>
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            Create Your Store
+          </h1>
           <p className="text-gray-600 mb-8 text-center">
-            Set up your store to start selling on eBay. Fill in the details below to get started.
+            Set up your store to start selling on eBay. Fill in the details
+            below to get started.
           </p>
 
           {error && (
@@ -115,7 +119,10 @@ const CreateStore = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
-              <label htmlFor="storeName" className="block text-gray-700 font-medium mb-2">
+              <label
+                htmlFor="storeName"
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Store Name *
               </label>
               <input
@@ -134,7 +141,10 @@ const CreateStore = () => {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="description" className="block text-gray-700 font-medium mb-2">
+              <label
+                htmlFor="description"
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Store Description
               </label>
               <textarea
@@ -152,38 +162,36 @@ const CreateStore = () => {
             </div>
 
             <div className="mb-8">
-              <label htmlFor="bannerImage" className="block text-gray-700 font-medium mb-2">
-                Store Banner Image
+              <label
+                htmlFor="bannerImageURL"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Store Banner Image URL
               </label>
-              <div className="flex items-center space-x-4">
-                <input
-                  type="file"
-                  id="bannerImage"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="bannerImage"
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded cursor-pointer hover:bg-gray-300"
-                >
-                  Choose Image
-                </label>
-                <span className="text-gray-500 text-sm">
-                  {formData.bannerImageURL ? "Image selected" : "No image selected"}
-                </span>
-              </div>
+              <input
+                type="url"
+                id="bannerImageURL"
+                name="bannerImageURL"
+                value={formData.bannerImageURL}
+                onChange={handleImageURLChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter image URL (e.g. https://example.com/image.jpg)"
+              />
               {formData.bannerImageURL && (
                 <div className="mt-4">
                   <img
                     src={formData.bannerImageURL}
                     alt="Store Banner Preview"
                     className="max-h-40 rounded border"
+                    onError={(e) => {
+                      e.target.src = ''; // Xóa ảnh nếu URL không hợp lệ
+                      setError("Invalid image URL");
+                    }}
                   />
                 </div>
               )}
               <p className="text-gray-500 text-sm mt-1">
-                Recommended size: 1200 x 300 pixels
+                Enter a valid image URL (e.g. https://example.com/image.jpg)
               </p>
             </div>
 

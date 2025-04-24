@@ -2,37 +2,62 @@ const Product = require('../models/Product');
 const Inventory = require('../models/Inventory');
 
 // Tạo sản phẩm
+// Tạo sản phẩm
 exports.createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
-    await Inventory.create({ productId: product._id }); // Khởi tạo tồn kho
+    const { sellerId, title, description, price, categoryId, image } = req.body;
+
+    // Kiểm tra sellerId
+    if (!sellerId) {
+      return res.status(400).json({ error: "Seller ID is required" });
+    }
+
+    // Kiểm tra imageUrl
+    if (!image) {
+      return res.status(400).json({ error: "Image URL is required" });
+    }
+
+    // Tạo sản phẩm với thông tin bao gồm cả ảnh
+    const product = await Product.create({ title, description, price,image, categoryId, sellerId });
+
+    // Khởi tạo tồn kho cho sản phẩm
+    await Inventory.create({ productId: product._id });
+
     res.status(201).json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+
+
+
+// Lấy tất cả sản phẩm (có tồn kho)
 // Lấy tất cả sản phẩm (có tồn kho)
 exports.getAllProducts = async (req, res) => {
-    try {
-      const products = await Product.find()
-        .populate('categoryId')
-        .populate('sellerId')
-        .lean();
-  
-      const withInventory = await Promise.all(
-        products.map(async (product) => {
-          const inventory = await Inventory.findOne({ productId: product._id });
-          return { ...product, quantity: inventory?.quantity || 0 };
-        })
-      );
-  
-      res.json(withInventory);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  };
-  
+  try {
+    const { sellerId } = req.query;
+
+    const filter = {};
+    if (sellerId) filter.sellerId = sellerId;
+
+    const products = await Product.find(filter)
+      .populate('categoryId')
+      .populate('sellerId')
+      .lean();
+
+    const withInventory = await Promise.all(
+      products.map(async (product) => {
+        const inventory = await Inventory.findOne({ productId: product._id });
+        return { ...product, quantity: inventory?.quantity || 0 };
+      })
+    );
+
+    res.json(withInventory);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // Cập nhật sản phẩm
 exports.updateProduct = async (req, res) => {

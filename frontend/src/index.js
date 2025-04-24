@@ -11,6 +11,7 @@ import Orders from "./pages/orders/page";
 import ListCategory from "./pages/listCategory/page";
 import Wishlist from "./pages/wishlist/page";
 import Sell from "./pages/sell/page";
+import CreateStore from "./pages/sell/createStore";
 
 import TotalSell from "./pages/totalSell/page";
 import Success from "./pages/success/page";
@@ -48,6 +49,7 @@ root.render(
         <Route path="/daily-deals" element={<DailyDeals />} />
         <Route path="/help" element={<HelpContact />} />
         <Route path="/products" element={<ProductList />} />
+        <Route path="/create-store" element={<CreateStore />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

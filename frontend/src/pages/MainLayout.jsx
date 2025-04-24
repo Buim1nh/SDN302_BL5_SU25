@@ -405,24 +405,6 @@ const MainPage = () => {
             className="relative mb-8 rounded-xl overflow-hidden shadow-lg"
             ref={bannerRef}
           >
-            {/* <div className="absolute top-1/2 left-4 z-10 transform -translate-y-1/2">
-              <button
-                onClick={() => scrollBanner("left")}
-                className="bg-white/30 backdrop-blur-sm hover:bg-white/50 text-white p-2 rounded-full"
-              >
-                <FiChevronLeft className="h-6 w-6" />
-              </button>
-            </div> */}
-
-            {/* <div className="absolute top-1/2 right-4 z-10 transform -translate-y-1/2">
-              <button
-                onClick={() => scrollBanner("right")}
-                className="bg-white/30 backdrop-blur-sm hover:bg-white/50 text-white p-2 rounded-full"
-              >
-                <FiChevronRight className="h-6 w-6" />
-              </button>
-            </div> */}
-
             <div className="relative h-[300px] md:h-[400px] overflow-hidden">
               {BANNER_SLIDES.map((slide, index) => (
                 <div
