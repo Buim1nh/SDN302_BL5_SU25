@@ -34,6 +34,11 @@ userSchema.pre("save", async function (next) {
 });
 
 // Method to compare password
+// userSchema.methods.comparePassword = async function (candidatePassword) {
+//   return await bcrypt.compare(candidatePassword, this.password);
+// };
+
+// Method to login old account
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return this.password === candidatePassword;
 };
