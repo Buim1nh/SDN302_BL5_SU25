@@ -95,7 +95,7 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <img
-              src={product.images?.[0] || "https://picsum.photos/id/250/300"}
+              src={product.image || "photo.png"}
               alt={product.title}
               className="w-full h-80 object-cover mb-4"
             />
