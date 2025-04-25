@@ -24,7 +24,7 @@ import SellerProducts from "./pages/sellerProduct/page";
 import DailyDeals from "./pages/dailyDeal/page";
 import HelpContact from "./pages/help/page";
 import ProductList from "./pages/product/ProductList";
-
+import DisputeManage from "./pages/sellerProduct/disputeManage";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -50,6 +50,7 @@ root.render(
         <Route path="/help" element={<HelpContact />} />
         <Route path="/products" element={<ProductList />} />
         <Route path="/create-store" element={<CreateStore />} />
+        <Route path="/disputes" element={<DisputeManage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

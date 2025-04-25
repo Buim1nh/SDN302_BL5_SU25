@@ -9,6 +9,8 @@ const inventoryRoutes = require("./routes/inventoryRoutes");
 const messageRoutes = require("./routes/message.routes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const disputeRoutes = require("./routes/dispute.routes");
+
 // Load environment variables
 dotenv.config();
 
@@ -30,6 +32,7 @@ app.use("/api/inventory", inventoryRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/disputes", disputeRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   logger.error(err.stack);
