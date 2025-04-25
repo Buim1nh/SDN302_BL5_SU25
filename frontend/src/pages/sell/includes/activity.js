@@ -1,4 +1,5 @@
 "use client"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   FaShoppingBag,
@@ -18,6 +19,31 @@ import {
 const Activity = ({ userRole }) => {
   const navigate = useNavigate()
   const isSeller = userRole === "seller"
+  const [orderItems, setOrderItems] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userData = localStorage.getItem('currentUser');
+        if (userData) {
+          fetch(`http://localhost:5000/api/orderItems/statistic/${JSON.parse(userData).id}`)
+            .then(response => response.json())
+            .then(data => {
+              setOrderItems(data);
+            });
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const calculateTotalRevenue = (items) => {
+    return items.reduce((total, item) => {
+      return total + (item.productId.price * item.quantity);
+    }, 0);
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen pb-8">
@@ -65,7 +91,7 @@ const Activity = ({ userRole }) => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Tổng doanh thu</p>
-                    <p className="text-2xl font-semibold text-gray-900">$1,320.00</p>
+                    <p className="text-2xl font-semibold text-gray-900">${calculateTotalRevenue(orderItems).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -210,10 +236,10 @@ const Activity = ({ userRole }) => {
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
                       <h3 className="font-medium">Tổng doanh thu</h3>
-                      <p className="text-sm text-gray-500">Tháng này</p>
+                      <p className="text-sm text-gray-500">Từ trước đến nay</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-green-600">$570.00</p>
+                      <p className="text-2xl font-bold text-green-600">${calculateTotalRevenue(orderItems).toLocaleString()}</p>
                       <button
                         onClick={() => navigate("/totalSell")}
                         className="text-blue-500 hover:text-blue-700 text-sm"

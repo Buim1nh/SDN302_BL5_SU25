@@ -8,7 +8,7 @@
   "productId": {
     "$oid": "67fe6d3281ab555c417197d7"
   },
-  "quantity": 1,
+  "quantity": 3,
   "status": "shipped"
 },
 {
@@ -34,7 +34,7 @@
   "productId": {
     "$oid": "67fe6d3281ab555c417197ed"
   },
-  "quantity": 1,
+  "quantity": 4,
   "status": "shipped"
 },
 {
@@ -47,7 +47,7 @@
   "productId": {
     "$oid": "67fe6d3281ab555c417197e1"
   },
-  "quantity": 1,
+  "quantity": 2,
   "status": "shipped"
 },
 {
@@ -60,7 +60,7 @@
   "productId": {
     "$oid": "67fe6d3281ab555c417197f7"
   },
-  "quantity": 1,
+  "quantity": 3,
   "status": "shipped"
 },
 {
@@ -73,7 +73,7 @@
   "productId": {
     "$oid": "67fe6d3281ab555c417197dc"
   },
-  "quantity": 1,
+  "quantity": 2,
   "status": "shipped"
 },
 {
@@ -87,20 +87,23 @@
     "$oid": "67fe6d3281ab555c417197d4"
   },
   "quantity": 13,
-  "status": "pending"
+  "status": "shipping",
+  "updatedAt": {
+    "$date": "2025-04-22T14:22:19.461Z"
+  }
 },
 {
   "_id": {
     "$oid": "67fe901f81ab555c4171982a"
   },
   "orderId": {
-    "$oid": "67fe742481ab555c4171980f"
+    "$oid": "67fe742481ab555c4171980a"
   },
   "productId": {
     "$oid": "67fe6d3281ab555c417197d5"
   },
-  "quantity": 1,
-  "status": "pending"
+  "quantity": 3,
+  "status": "shipped"
 },
 {
   "_id": {
@@ -112,8 +115,11 @@
   "productId": {
     "$oid": "67fe6d3281ab555c417197d4"
   },
-  "quantity": 25,
-  "status": "pending"
+  "quantity": 5,
+  "status": "shipped",
+  "updatedAt": {
+    "$date": "2025-04-23T14:41:54.061Z"
+  }
 },
 {
   "_id": {
@@ -133,13 +139,13 @@
     "$oid": "67fe901f81ab555c4171982d"
   },
   "orderId": {
-    "$oid": "67fe742481ab555c41719811"
+    "$oid": "67fe742481ab555c4171980e"
   },
   "productId": {
     "$oid": "67fe6d3281ab555c417197d6"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "shipped"
 },
 {
   "_id": {
@@ -165,7 +171,10 @@
     "$oid": "67fe6d3281ab555c417197d7"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "shipped",
+  "updatedAt": {
+    "$date": "2025-04-22T14:19:07.827Z"
+  }
 },
 {
   "_id": {
@@ -224,26 +233,26 @@
     "$oid": "67fe901f81ab555c41719834"
   },
   "orderId": {
-    "$oid": "67fe742481ab555c41719814"
+    "$oid": "67fe742481ab555c4171980c"
   },
   "productId": {
     "$oid": "67fe6d3281ab555c417197d8"
   },
-  "quantity": 1,
-  "status": "pending"
+  "quantity": 3,
+  "status": "shipped"
 },
 {
   "_id": {
     "$oid": "67fe901f81ab555c41719835"
   },
   "orderId": {
-    "$oid": "67fe742481ab555c41719814"
+    "$oid": "67fe742481ab555c4171980a"
   },
   "productId": {
     "$oid": "67fe6d3281ab555c417197dd"
   },
-  "quantity": 1,
-  "status": "pending"
+  "quantity": 2,
+  "status": "shipped"
 },
 {
   "_id": {
@@ -256,7 +265,10 @@
     "$oid": "67fe6d3281ab555c417197dd"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "failed to ship",
+  "updatedAt": {
+    "$date": "2025-04-22T14:20:24.384Z"
+  }
 },
 {
   "_id": {
@@ -276,26 +288,26 @@
     "$oid": "67fe901f81ab555c41719838"
   },
   "orderId": {
-    "$oid": "67fe742481ab555c41719816"
+    "$oid": "67fe742481ab555c4171980c"
   },
   "productId": {
     "$oid": "67fe6d3281ab555c417197e2"
   },
-  "quantity": 1,
-  "status": "pending"
+  "quantity": 3,
+  "status": "shipped"
 },
 {
   "_id": {
     "$oid": "67fe901f81ab555c41719839"
   },
   "orderId": {
-    "$oid": "67fe742481ab555c41719816"
+    "$oid": "67fe742481ab555c4171980c"
   },
   "productId": {
     "$oid": "67fe6d3281ab555c417197ea"
   },
-  "quantity": 1,
-  "status": "pending"
+  "quantity": 6,
+  "status": "shipped"
 },
 {
   "_id": {

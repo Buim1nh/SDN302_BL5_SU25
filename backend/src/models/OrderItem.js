@@ -11,6 +11,7 @@ const orderItemSchema = new Schema(
       default: "pending",
     },
     quantity: { type: Number, required: true },
+    unitPrice: { type: Number },
   },
   { timestamps: true }
 );
