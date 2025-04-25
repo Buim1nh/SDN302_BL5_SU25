@@ -158,7 +158,7 @@ const TotalSell = () => {
         <div className="bg-white border rounded-lg p-6 shadow-md">
         <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-800">
-              Sales Overview (Seller: {loggedInUser.fullname})
+              Sales Overview (Seller: {loggedInUser.fullname || loggedInUser.username})
             </h3>
             <button
               onClick={() => navigate('/sellerProduct')} // Add navigation button
