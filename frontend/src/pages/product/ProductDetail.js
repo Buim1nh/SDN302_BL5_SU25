@@ -138,7 +138,7 @@ useEffect(() => {
       {reviews.map((review) => (
         <div key={review._id} className="border rounded p-4 shadow-sm">
           <div className="flex justify-between items-center mb-1">
-            <span className="font-semibold">{review.reviewerId?.username || "Anonymous"}</span>
+            <span className="font-semibold">{review.reviewerId?.fullname || review.reviewerId?.username || "Anonymous"}</span>
             <span className="text-yellow-500">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
           </div>
           <p className="text-sm text-gray-700">{review.comment || "No comment."}</p>
