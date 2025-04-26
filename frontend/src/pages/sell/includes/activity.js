@@ -23,13 +23,14 @@ const Activity = ({ userRole }) => {
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [totalOnSale, setTotalOnSale] = useState(0)
   const [totalPurchasedProducts, setTotalPurchasedProducts] = useState(0)
+  const userData = localStorage.getItem('currentUser')
   //lấy tổng số lượng đa bán
   useEffect(() => {
     const fetchTotalOnSale = async () => {
       if (isSeller) {
         const token = localStorage.getItem("token") // Assuming token is stored in localStorage
         try {
-          const response = await fetch("http://localhost:5000/api/products/seller/6808e68dab066dde25255adc/total-on-sale",)
+          const response = await fetch(`http://localhost:5000/api/products/seller/${JSON.parse(userData).id}/total-on-sale`)
           const data = await response.json()
           if (response.ok) {
             setTotalOnSale(data.totalQuantity) // Set the total quantity from the response
@@ -50,7 +51,7 @@ const Activity = ({ userRole }) => {
     const fetchTotalPurchasedProducts = async () => {
       const token = localStorage.getItem("token") // Assuming token is stored in localStorage
       try {
-        const response = await fetch("http://localhost:5000/api/products/buyer/67fe591581ab555c417197c1/total-purchased-products")
+        const response = await fetch(`http://localhost:5000/api/products/buyer/${JSON.parse(userData).id}/total-purchased-products`)
         const data = await response.json()
         if (response.ok) {
           setTotalPurchasedProducts(data.totalQuantity) // Set the total quantity from the response
@@ -67,10 +68,11 @@ const Activity = ({ userRole }) => {
   //tổng doanh thu
   useEffect(() => {
     const fetchTotalRevenue = async () => {
+      
       if (isSeller) {
         const token = localStorage.getItem("token") // Assuming token is stored in localStorage
         try {
-          const response = await fetch("http://localhost:5000/api/products/seller/67fe591581ab555c417197bc/sold-products")
+          const response = await fetch(`http://localhost:5000/api/products/seller/67fe591581ab555c417197bc/sold-products`)
           const data = await response.json()
           if (response.ok) {
             setTotalRevenue(data.totalRevenue || 0) // Set the total revenue from the response
@@ -104,7 +106,7 @@ const Activity = ({ userRole }) => {
                 <FaShoppingBag size={24} />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Đơn hàng đã mua</p>
+                <p className="text-sm font-medium text-gray-500">Sản phẩm đã mua</p>
                 <p className="text-2xl font-semibold text-gray-900">{totalPurchasedProducts}</p>
               </div>
             </div>
