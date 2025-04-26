@@ -3,36 +3,29 @@ const Inventory = require('../models/Inventory');
 
 // Tạo sản phẩm
 // Tạo sản phẩm
+// Tạo sản phẩm
 exports.createProduct = async (req, res) => {
   try {
     const { sellerId, title, description, price, categoryId, image } = req.body;
 
-    // Kiểm tra sellerId
-    if (!sellerId) {
-      return res.status(400).json({ error: "Seller ID is required" });
+    // Validate required fields
+    if (!sellerId) return res.status(400).json({ error: "Seller ID is required" });
+    if (!image) return res.status(400).json({ error: "Image URL is required" });
+
+    // Create the product
+    const product = await Product.create({ title, description, price, image, categoryId, sellerId });
+
+    if (!product) {
+      return res.status(500).json({ error: "Unable to create product" });
     }
 
-    // Kiểm tra imageUrl
-    if (!image) {
-      return res.status(400).json({ error: "Image URL is required" });
-    }
-
-    // Tạo sản phẩm với thông tin bao gồm cả ảnh
-    const product = await Product.create({ title, description, price,image, categoryId, sellerId });
-
-    // Khởi tạo tồn kho cho sản phẩm
-    await Inventory.create({ productId: product._id });
-
+    // No quantity for the product, it will be handled in the Inventory
     res.status(201).json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-
-
-
-// Lấy tất cả sản phẩm (có tồn kho)
 // Lấy tất cả sản phẩm (có tồn kho)
 exports.getAllProducts = async (req, res) => {
   try {

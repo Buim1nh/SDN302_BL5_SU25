@@ -118,7 +118,6 @@ useEffect(() => {
           <div>
             <p className="text-lg font-semibold">Price: £{(product.price / 100).toFixed(2)}</p>
             <p className="text-md text-gray-600 mt-2">Category: {product.categoryId?.name || "N/A"}</p>
-            <p className="text-md text-gray-600 mt-2">Seller: {product.sellerId?.name || "N/A"}</p>
             <p className="text-md text-gray-600 mt-2">Quantity: {product.quantity}</p>
             <p className="text-md text-gray-600 mt-2">Description: {product.description || "No description available."}</p>
 

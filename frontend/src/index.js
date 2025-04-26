@@ -24,6 +24,7 @@ import SellerProducts from "./pages/sellerProduct/page";
 import DailyDeals from "./pages/dailyDeal/page";
 import HelpContact from "./pages/help/page";
 import ProductList from "./pages/product/ProductList";
+import InventoryList from "./pages/inventory/InventoryList";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -50,6 +51,7 @@ root.render(
         <Route path="/help" element={<HelpContact />} />
         <Route path="/products" element={<ProductList />} />
         <Route path="/create-store" element={<CreateStore />} />
+        <Route path="/inventory" element={<InventoryList />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
