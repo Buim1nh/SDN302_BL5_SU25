@@ -110,42 +110,6 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-//lấy đơn qua một người mua
-exports.getOrdersByBuyerId = async (req, res) => {
-  try {
-    const { buyerId } = req.params;
-
-    // Tìm tất cả các Orders của buyerId chỉ lấy các trường cần thiết
-    const orders = await Order.find({ buyerId }, '_id buyerId addressId orderDate status').lean();
-
-    const detailedOrders = await Promise.all(
-      orders.map(async (order) => {
-        // Lấy danh sách các OrderItems của Order
-        const orderItems = await OrderItem.find({ orderId: order._id }, '_id productId quantity unitPrice').lean();
-
-        // Nếu muốn thêm thông tin chi tiết sản phẩm, bạn có thể sử dụng populate hoặc truy vấn Product ở đây
-        const withProductDetails = await Promise.all(
-          orderItems.map(async (item) => {
-            const product = await Product.findById(item.productId, '_id title price').lean(); // Lấy thông tin cơ bản của sản phẩm
-            return {
-              ...item,
-              product, // Thêm thông tin chi tiết sản phẩm
-            };
-          })
-        );
-
-        return {
-          ...order,
-          orderItems: withProductDetails, // Thêm danh sách sản phẩm vào Order
-        };
-      })
-    );
-
-    res.json(detailedOrders);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
 
 // Đang bán
 exports.getProductsBySellerId = async (req, res) => {
@@ -208,12 +172,23 @@ exports.getSoldProductsBySellerId = async (req, res) => {
     // Tìm tất cả các sản phẩm của sellerId
     const products = await Product.find({ sellerId }).lean();
 
-    // Lấy danh sách OrderItems liên quan đến các sản phẩm này
+    // Lấy danh sách productIds từ những sản phẩm của seller
     const productIds = products.map((product) => product._id);
-    const soldItems = await OrderItem.find({ productId: { $in: productIds } }).lean();
+
+    // Lấy danh sách OrderItems liên quan đến các sản phẩm này, chỉ khi Order.status = "shipped"
+    const soldItems = await OrderItem.find({ productId: { $in: productIds } })
+      .populate({
+        path: "orderId", // Populate để lấy thông tin Order
+        select: "status", // Chỉ lấy trường status từ Order
+        match: { status: "shipped" }, // Chỉ lấy các Order có trạng thái "shipped"
+      })
+      .lean();
+
+    // Lọc ra các OrderItem có Order hợp lệ (tức là Order.status = "shipped")
+    const filteredSoldItems = soldItems.filter((item) => item.orderId); // Loại bỏ các OrderItem không có Order khớp
 
     // Kết hợp thông tin sản phẩm với OrderItem, thêm unitPrice
-    const soldProducts = soldItems.map((item) => {
+    const soldProducts = filteredSoldItems.map((item) => {
       const product = products.find((p) => p._id.toString() === item.productId.toString());
       return {
         ...item,
@@ -227,14 +202,13 @@ exports.getSoldProductsBySellerId = async (req, res) => {
       return sum + (item.unitPrice * item.quantity);
     }, 0);
 
-    res.json({ soldProducts, totalRevenue }); // Trả về danh sách và tổng giá
+    // Trả về danh sách sản phẩm đã bán và tổng doanh thu
+    res.json({ soldProducts, totalRevenue });
   } catch (err) {
+    console.error("Error in getSoldProductsBySellerId:", err);
     res.status(500).json({ error: err.message });
   }
 };
-
-
-// Tổng doanh thu 
 
 //tổng số lượng sản phẩm đã mua
 exports.getTotalPurchasedProducts = async (req, res) => {
