@@ -231,7 +231,7 @@ exports.getTotalPurchasedProducts = async (req, res) => {
   }
 };
 
-//Tổng số lượng đang bán
+//số sản phẩm
 exports.getTotalQuantityOnSale = async (req, res) => {
   try {
     const { sellerId } = req.params;
@@ -240,11 +240,13 @@ exports.getTotalQuantityOnSale = async (req, res) => {
     const products = await Product.find({ sellerId }, '_id').lean();
     const productIds = products.map((product) => product._id);
 
-    // Lấy danh sách tồn kho của các sản phẩm và tính tổng số lượng
-    const inventories = await Inventory.find({ productId: { $in: productIds }, quantity: { $gt: 0 } }, 'quantity').lean();
-    const totalQuantity = inventories.reduce((sum, inventory) => sum + inventory.quantity, 0);
+    // Lấy danh sách tồn kho của các sản phẩm có quantity > 0
+    const uniqueProducts = await Inventory.find({ productId: { $in: productIds }, quantity: { $gt: 0 } }, 'productId').distinct('productId').lean();
 
-    res.json({ totalQuantity });
+    // Số lượng sản phẩm khác nhau
+    const totalDistinctProducts = uniqueProducts.length;
+
+    res.json({ totalDistinctProducts });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
