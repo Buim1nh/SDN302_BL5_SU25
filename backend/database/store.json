@@ -1,5 +1,24 @@
 [{
   "_id": {
+    "$oid": "67fe9b4cb5742ba0bd2ffa6c"
+  },
+  "sellerId": {
+    "$oid": "67fdf95db9751044757ef0d8"
+  },
+  "storeName": "123",
+  "description": "1232",
+  "bannerImageURL": "https://i.ytimg.com/vi/jhQT94-G5dA/maxresdefault.jpg",
+  "createdAt": {
+    "$date": "2025-04-15T17:45:48.173Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-23T16:59:47.491Z"
+  },
+  "__v": 0,
+  "status": "approved"
+},
+{
+  "_id": {
     "$oid": "67fe95c381ab555c41719888"
   },
   "sellerId": {
@@ -7,7 +26,11 @@
   },
   "storeName": "Store 1",
   "description": "Store 1 description",
-  "bannerImageURL": "https://picsum.photos/id/1/500"
+  "bannerImageURL": "https://picsum.photos/id/1/500",
+  "status": "approved",
+  "updatedAt": {
+    "$date": "2025-04-23T16:59:49.366Z"
+  }
 },
 {
   "_id": {
@@ -18,7 +41,11 @@
   },
   "storeName": "Store 2",
   "description": "Store 2 description",
-  "bannerImageURL": "https://picsum.photos/id/2/500"
+  "bannerImageURL": "https://picsum.photos/id/2/500",
+  "status": "approved",
+  "updatedAt": {
+    "$date": "2025-04-23T16:59:50.038Z"
+  }
 },
 {
   "_id": {
@@ -29,5 +56,66 @@
   },
   "storeName": "Store 3",
   "description": "Store 3 description",
-  "bannerImageURL": "https://picsum.photos/id/3/500"
+  "bannerImageURL": "https://picsum.photos/id/3/500",
+  "status": "approved",
+  "updatedAt": {
+    "$date": "2025-04-23T16:59:50.781Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68091ca0a5ece10ad84dcb90"
+  },
+  "sellerId": {
+    "$oid": "67fe035e509ee998bf56cdbf"
+  },
+  "storeName": "test123",
+  "description": "123",
+  "bannerImageURL": "",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2025-04-23T17:00:16.719Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-23T17:00:24.482Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68091e24a5ece10ad84dcc15"
+  },
+  "sellerId": {
+    "$oid": "68091e19a5ece10ad84dcc0e"
+  },
+  "storeName": "123",
+  "description": "123",
+  "bannerImageURL": "https://i.ytimg.com/vi/jhQT94-G5dA/maxresdefault.jpg",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2025-04-23T17:06:44.141Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T07:12:33.567Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680c87a3eadbd7d625395172"
+  },
+  "sellerId": {
+    "$oid": "680c8781eadbd7d62539516b"
+  },
+  "storeName": "45",
+  "description": "45",
+  "bannerImageURL": "https://mekongasean.vn/stores/news_dataimages/mekongaseanvn/082022/23/17/ebay-headquarters-2665.jpg",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2025-04-26T07:13:39.766Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T07:13:51.723Z"
+  },
+  "__v": 0
 }]
