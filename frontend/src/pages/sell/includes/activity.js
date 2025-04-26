@@ -1,6 +1,5 @@
 
 "use client"
-import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import React, { useState, useEffect } from "react"
 import {
@@ -280,7 +279,7 @@ const Activity = ({ userRole }) => {
                       <p className="text-sm text-gray-500">Từ trước đến nay</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-green-600">${calculateTotalRevenue(orderItems).toLocaleString()}</p>
+                      <p className="text-2xl font-bold text-green-600">${totalRevenue}</p>
                       <button
                         onClick={() => navigate("/totalSell")}
                         className="text-blue-500 hover:text-blue-700 text-sm"
