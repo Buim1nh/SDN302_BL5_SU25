@@ -1,5 +1,7 @@
+
 "use client"
 import { useNavigate } from "react-router-dom"
+import React, { useState, useEffect } from "react"
 import {
   FaShoppingBag,
   FaHistory,
@@ -18,7 +20,71 @@ import {
 const Activity = ({ userRole }) => {
   const navigate = useNavigate()
   const isSeller = userRole === "seller"
+  const [totalRevenue, setTotalRevenue] = useState(0)
+  const [totalOnSale, setTotalOnSale] = useState(0)
+  const [totalPurchasedProducts, setTotalPurchasedProducts] = useState(0)
+  //lấy tổng số lượng đa bán
+  useEffect(() => {
+    const fetchTotalOnSale = async () => {
+      if (isSeller) {
+        const token = localStorage.getItem("token") // Assuming token is stored in localStorage
+        try {
+          const response = await fetch("http://localhost:5000/api/products/seller/6808e68dab066dde25255adc/total-on-sale",)
+          const data = await response.json()
+          if (response.ok) {
+            setTotalOnSale(data.totalQuantity) // Set the total quantity from the response
+          } else {
+            console.error("Failed to fetch total-on-sale:", data.message)
+          }
+        } catch (error) {
+          console.error("Error fetching total-on-sale:", error)
+        }
+      }
+    }
 
+    fetchTotalOnSale()
+  }, [isSeller])
+  
+  //tổng số lượng đã mua
+  useEffect(() => {
+    const fetchTotalPurchasedProducts = async () => {
+      const token = localStorage.getItem("token") // Assuming token is stored in localStorage
+      try {
+        const response = await fetch("http://localhost:5000/api/products/buyer/67fe591581ab555c417197c1/total-purchased-products")
+        const data = await response.json()
+        if (response.ok) {
+          setTotalPurchasedProducts(data.totalQuantity) // Set the total quantity from the response
+        } else {
+          console.error("Failed to fetch total-purchased-products:", data.message)
+        }
+      } catch (error) {
+        console.error("Error fetching total-purchased-products:", error)
+      }
+    }
+
+    fetchTotalPurchasedProducts()
+  }, [])
+  //tổng doanh thu
+  useEffect(() => {
+    const fetchTotalRevenue = async () => {
+      if (isSeller) {
+        const token = localStorage.getItem("token") // Assuming token is stored in localStorage
+        try {
+          const response = await fetch("http://localhost:5000/api/products/seller/67fe591581ab555c417197bc/sold-products")
+          const data = await response.json()
+          if (response.ok) {
+            setTotalRevenue(data.totalRevenue || 0) // Set the total revenue from the response
+          } else {
+            console.error("Failed to fetch total-revenue:", data.message)
+          }
+        } catch (error) {
+          console.error("Error fetching total-revenue:", error)
+        }
+      }
+    }
+
+    fetchTotalRevenue()
+  }, [isSeller])
   return (
     <div className="bg-gray-50 min-h-screen pb-8">
       {/* Header */}
@@ -39,7 +105,7 @@ const Activity = ({ userRole }) => {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Đơn hàng đã mua</p>
-                <p className="text-2xl font-semibold text-gray-900">12</p>
+                <p className="text-2xl font-semibold text-gray-900">{totalPurchasedProducts}</p>
               </div>
             </div>
           </div>
@@ -53,7 +119,7 @@ const Activity = ({ userRole }) => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Sản phẩm đang bán</p>
-                    <p className="text-2xl font-semibold text-gray-900">3</p>
+                    <p className="text-2xl font-semibold text-gray-900">{totalOnSale}</p>
                   </div>
                 </div>
               </div>
@@ -65,7 +131,7 @@ const Activity = ({ userRole }) => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Tổng doanh thu</p>
-                    <p className="text-2xl font-semibold text-gray-900">$1,320.00</p>
+                    <p className="text-2xl font-semibold text-gray-900">${totalRevenue}</p>
                   </div>
                 </div>
               </div>
