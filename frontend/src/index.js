@@ -11,6 +11,7 @@ import Orders from "./pages/orders/page";
 import ListCategory from "./pages/listCategory/page";
 import Wishlist from "./pages/wishlist/page";
 import Sell from "./pages/sell/page";
+import CreateStore from "./pages/sell/createStore";
 
 import TotalSell from "./pages/totalSell/page";
 import Success from "./pages/success/page";
@@ -23,6 +24,7 @@ import SellerProducts from "./pages/sellerProduct/page";
 import DailyDeals from "./pages/dailyDeal/page";
 import HelpContact from "./pages/help/page";
 import ProductList from "./pages/product/ProductList";
+import InventoryList from "./pages/inventory/InventoryList";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -48,6 +50,8 @@ root.render(
         <Route path="/daily-deals" element={<DailyDeals />} />
         <Route path="/help" element={<HelpContact />} />
         <Route path="/products" element={<ProductList />} />
+        <Route path="/create-store" element={<CreateStore />} />
+        <Route path="/inventory" element={<InventoryList />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

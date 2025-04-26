@@ -215,9 +215,23 @@ exports.logout = (req, res) => {
  * @route POST /api/auth/upgrade-to-seller
  * @access Private
  */
-exports.upgradeToSeller = async (req, res) => {
+/**
+ * Create a store for a seller
+ * @route POST /api/auth/create-store
+ * @access Private
+ */
+exports.createStore = async (req, res) => {
   try {
     const userId = req.user.id;
+    const { storeName, description, bannerImageURL } = req.body;
+
+    // Validate required fields
+    if (!storeName) {
+      return res.status(400).json({
+        success: false,
+        message: "Store name is required",
+      });
+    }
 
     // Find the user
     const user = await User.findById(userId);
@@ -229,25 +243,27 @@ exports.upgradeToSeller = async (req, res) => {
       });
     }
 
-    // Check if user is already a seller
-    if (user.role === "seller") {
+    // Check if user is already a seller with a store
+    const existingStore = await Store.findOne({ sellerId: userId });
+    if (existingStore) {
       return res.status(400).json({
         success: false,
-        message: "User is already a seller",
-      });
-    }
-
-    // Check if user is admin (admins cannot become sellers this way)
-    if (user.role === "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Admins cannot be upgraded to sellers.",
+        message: "You already have a store",
       });
     }
 
     // Update user role to seller
     user.role = "seller";
     await user.save();
+
+    // Create the store with pending status
+    const store = await Store.create({
+      sellerId: userId,
+      storeName,
+      description: description || "",
+      bannerImageURL: bannerImageURL || "",
+      status: "pending",
+    });
 
     // Generate new JWT token with updated role
     const token = jwt.sign(
@@ -256,10 +272,11 @@ exports.upgradeToSeller = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      message: "User upgraded to seller successfully",
+      message: "Store created successfully and pending approval",
       token,
+      store,
       user: {
         id: user._id,
         username: user.username,
@@ -268,56 +285,6 @@ exports.upgradeToSeller = async (req, res) => {
         role: user.role,
         avatarURL: user.avatarURL,
       },
-    });
-  } catch (error) {
-    logger.error("Upgrade to seller error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error upgrading user to seller",
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Create a store for a seller
- * @route POST /api/auth/create-store
- * @access Private (Seller only)
- */
-exports.createStore = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { storeName, description, bannerImageURL } = req.body;
-    // Validate required fields
-    if (!storeName) {
-      return res.status(400).json({
-        success: false,
-        message: "Store name is required",
-      });
-    }
-
-    // Check if store already exists for this seller
-    const existingStore = await Store.findOne({ sellerId: userId });
-
-    if (existingStore) {
-      return res.status(400).json({
-        success: false,
-        message: "You already have a store",
-      });
-    }
-
-    // Create the store
-    const store = await Store.create({
-      sellerId: userId,
-      storeName,
-      description: description || "",
-      bannerImageURL: bannerImageURL || "",
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Store created successfully",
-      store, // Return the created store object
     });
   } catch (error) {
     logger.error("Create store error:", error);

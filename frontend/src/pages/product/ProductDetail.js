@@ -31,6 +31,21 @@ export default function ProductDetail() {
 
     fetchProduct();
   }, [id]);
+  const [reviews, setReviews] = useState([]);
+
+useEffect(() => {
+  const fetchReviews = async () => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/reviews/product/${id}`);
+      setReviews(res.data);
+    } catch (err) {
+      console.error("Failed to fetch reviews", err);
+    }
+  };
+
+  fetchReviews();
+}, [id]);
+
 
   const handleEdit = () => setShowEditModal(true);
 
@@ -95,7 +110,7 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <img
-              src={product.images?.[0] || "https://picsum.photos/id/250/300"}
+              src={product.image || "photo.png"}
               alt={product.title}
               className="w-full h-80 object-cover mb-4"
             />
@@ -103,7 +118,6 @@ export default function ProductDetail() {
           <div>
             <p className="text-lg font-semibold">Price: £{(product.price / 100).toFixed(2)}</p>
             <p className="text-md text-gray-600 mt-2">Category: {product.categoryId?.name || "N/A"}</p>
-            <p className="text-md text-gray-600 mt-2">Seller: {product.sellerId?.name || "N/A"}</p>
             <p className="text-md text-gray-600 mt-2">Quantity: {product.quantity}</p>
             <p className="text-md text-gray-600 mt-2">Description: {product.description || "No description available."}</p>
 
@@ -114,6 +128,27 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
+        {/* USER REVIEWS */}
+<div className="mt-12">
+  <h2 className="text-2xl font-bold mb-4">User Reviews</h2>
+  {reviews.length === 0 ? (
+    <p className="text-gray-500">No reviews yet.</p>
+  ) : (
+    <div className="space-y-4">
+      {reviews.map((review) => (
+        <div key={review._id} className="border rounded p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-semibold">{review.reviewerId?.username || "Anonymous"}</span>
+            <span className="text-yellow-500">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
+          </div>
+          <p className="text-sm text-gray-700">{review.comment || "No comment."}</p>
+          <p className="text-xs text-gray-400 mt-1">{new Date(review.createdAt).toLocaleString()}</p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
 
         {/* EDIT MODAL */}
         {showEditModal && (
