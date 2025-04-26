@@ -87,7 +87,7 @@
     "$oid": "67fe609581ab555c417197d2"
   },
   "orderDate": "2025-03-24T15:46:05.866Z",
-  "status": "pending"
+  "status": "shipped"
 },
 {
   "_id": {
@@ -113,7 +113,7 @@
     "$oid": "67fe609581ab555c417197d2"
   },
   "orderDate": "2025-03-24T16:09:11.474Z",
-  "status": "pending"
+  "status": "shipped"
 },
 {
   "_id": {
@@ -289,11 +289,11 @@
     "$oid": "67fe742481ab555c41719820"
   },
   "buyerId": {
-    "$oid": "67fe591581ab555c417197c1"
+    "$oid": "67fe591581ab555c417197bc"
   },
   "addressId": {
     "$oid": "67fe609581ab555c417197d2"
   },
   "orderDate": "2025-03-27T17:07:03.958Z",
-  "status": "pending"
+  "status": "shipped"
 }]

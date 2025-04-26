@@ -218,7 +218,7 @@ const TotalSell = () => {
                 <option value="year">Last Year</option>
               </select>
               <button
-                onClick={() => navigate('/sellerProduct')}
+                onClick={() => navigate('/products')}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 Quản lý sản phẩm
