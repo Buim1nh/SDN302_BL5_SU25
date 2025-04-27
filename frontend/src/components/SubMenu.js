@@ -56,9 +56,9 @@ export default function SubMenu() {
             else if (item.id === "inventory") {
                 navigate("/inventory");
             }
-        } else if (item.id === "dispute") {
-            navigate("/disputes");
-
+            else if (item.id === "dispute") {
+                navigate("/disputes");
+            }
         } else {
             // Navigate to list category page for category items
             navigate(`/list-category/${item.id}`);
