@@ -33,7 +33,7 @@ const Activity = ({ userRole }) => {
           const response = await fetch(`http://localhost:5000/api/products/seller/${JSON.parse(userData).id}/total-on-sale`)
           const data = await response.json()
           if (response.ok) {
-            setTotalOnSale(data.totalQuantity) // Set the total quantity from the response
+            setTotalOnSale(data.totalDistinctProducts) // Set the total quantity from the response
           } else {
             console.error("Failed to fetch total-on-sale:", data.message)
           }
