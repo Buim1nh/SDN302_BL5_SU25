@@ -9,7 +9,11 @@
     "$oid": "67fe6d3281ab555c417197d7"
   },
   "quantity": 3,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 1200,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.990Z"
+  }
 },
 {
   "_id": {
@@ -22,7 +26,11 @@
     "$oid": "67fe6d3281ab555c417197ef"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 950,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.991Z"
+  }
 },
 {
   "_id": {
@@ -35,7 +43,11 @@
     "$oid": "67fe6d3281ab555c417197ed"
   },
   "quantity": 4,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 1500,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.991Z"
+  }
 },
 {
   "_id": {
@@ -48,7 +60,11 @@
     "$oid": "67fe6d3281ab555c417197e1"
   },
   "quantity": 2,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 850,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.991Z"
+  }
 },
 {
   "_id": {
@@ -61,7 +77,11 @@
     "$oid": "67fe6d3281ab555c417197f7"
   },
   "quantity": 3,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 1100,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.991Z"
+  }
 },
 {
   "_id": {
@@ -74,7 +94,11 @@
     "$oid": "67fe6d3281ab555c417197dc"
   },
   "quantity": 2,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 450,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.991Z"
+  }
 },
 {
   "_id": {
@@ -89,8 +113,9 @@
   "quantity": 13,
   "status": "shipping",
   "updatedAt": {
-    "$date": "2025-04-22T14:22:19.461Z"
-  }
+    "$date": "2025-04-27T04:35:05.991Z"
+  },
+  "unitPrice": 2500
 },
 {
   "_id": {
@@ -103,7 +128,11 @@
     "$oid": "67fe6d3281ab555c417197d5"
   },
   "quantity": 3,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 1800,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.991Z"
+  }
 },
 {
   "_id": {
@@ -118,8 +147,9 @@
   "quantity": 5,
   "status": "shipped",
   "updatedAt": {
-    "$date": "2025-04-23T14:41:54.061Z"
-  }
+    "$date": "2025-04-27T04:35:05.992Z"
+  },
+  "unitPrice": 2500
 },
 {
   "_id": {
@@ -132,7 +162,11 @@
     "$oid": "67fe6d3281ab555c417197dc"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 450,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -145,7 +179,11 @@
     "$oid": "67fe6d3281ab555c417197d6"
   },
   "quantity": 1,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 4500,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -158,7 +196,11 @@
     "$oid": "67fe6d3281ab555c417197d8"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 350,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -173,8 +215,9 @@
   "quantity": 1,
   "status": "shipped",
   "updatedAt": {
-    "$date": "2025-04-22T14:19:07.827Z"
-  }
+    "$date": "2025-04-27T04:35:05.992Z"
+  },
+  "unitPrice": 1200
 },
 {
   "_id": {
@@ -187,7 +230,11 @@
     "$oid": "67fe6d3281ab555c417197dd"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 1200,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -200,7 +247,11 @@
     "$oid": "67fe6d3281ab555c417197e0"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 980,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -213,7 +264,11 @@
     "$oid": "67fe6d3281ab555c417197d4"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 2500,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -226,7 +281,11 @@
     "$oid": "67fe6d3281ab555c417197d5"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 1800,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -239,7 +298,11 @@
     "$oid": "67fe6d3281ab555c417197d8"
   },
   "quantity": 3,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 350,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -252,7 +315,11 @@
     "$oid": "67fe6d3281ab555c417197dd"
   },
   "quantity": 2,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 1200,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -267,8 +334,9 @@
   "quantity": 1,
   "status": "failed to ship",
   "updatedAt": {
-    "$date": "2025-04-22T14:20:24.384Z"
-  }
+    "$date": "2025-04-27T04:35:05.992Z"
+  },
+  "unitPrice": 1200
 },
 {
   "_id": {
@@ -281,7 +349,11 @@
     "$oid": "67fe6d3281ab555c417197e0"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 980,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -294,7 +366,11 @@
     "$oid": "67fe6d3281ab555c417197e2"
   },
   "quantity": 3,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 700,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -307,7 +383,11 @@
     "$oid": "67fe6d3281ab555c417197ea"
   },
   "quantity": 6,
-  "status": "shipped"
+  "status": "shipped",
+  "unitPrice": 1400,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -320,7 +400,11 @@
     "$oid": "67fe6d3281ab555c417197e1"
   },
   "quantity": 3,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 850,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -333,7 +417,11 @@
     "$oid": "67fe6d3281ab555c417197d5"
   },
   "quantity": 2,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 1800,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -346,7 +434,11 @@
     "$oid": "67fe6d3281ab555c417197e4"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 1100,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -359,7 +451,11 @@
     "$oid": "67fe6d3281ab555c417197e8"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 3200,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -372,7 +468,11 @@
     "$oid": "67fe6d3281ab555c417197e6"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 2500,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.992Z"
+  }
 },
 {
   "_id": {
@@ -385,7 +485,11 @@
     "$oid": "67fe6d3281ab555c417197d6"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 4500,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.993Z"
+  }
 },
 {
   "_id": {
@@ -398,7 +502,11 @@
     "$oid": "67fe6d3281ab555c417197d7"
   },
   "quantity": 1,
-  "status": "pending"
+  "status": "pending",
+  "unitPrice": 1200,
+  "updatedAt": {
+    "$date": "2025-04-27T04:35:05.993Z"
+  }
 },
 {
   "_id": {

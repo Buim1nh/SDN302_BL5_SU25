@@ -239,7 +239,7 @@ const TotalSell = () => {
             <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
               <h4 className="text-purple-700 font-medium">Products Shipped</h4>
               <p className="text-2xl font-bold">
-                {filteredData.reduce((acc, item) => acc + item.quantity, 0)}
+                {[...new Set(filteredData.map(item => item.productId._id))].length}
               </p>
             </div>
           </div>
