@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 export default function SubMenu() {
@@ -10,7 +10,9 @@ export default function SubMenu() {
     const staticMenuItems = [
         { id: "home", name: "Home", isStatic: true },
         { id: "saved", name: "Saved", isStatic: true },
-        { id: "sell", name: "Sell", isStatic: true }
+        { id: "sell", name: "Sell", isStatic: true },
+        {id: "product", name: "Your Product", isStatic: true},
+        { id: "dispute", name: "Manage Dispute", isStatic: true }
     ];
 
     // Fetch categories from API
@@ -47,9 +49,10 @@ export default function SubMenu() {
             // Handle static menu items (Home, Saved, Sell)
             if (item.id === "home") {
                 navigate("/");
-            } else {
-                // You can add more navigation logic for other static items
-                console.log(`Clicked on ${item.name}`);
+            } else if (item.id === "product") {
+                navigate("/products");
+            } else if (item.id === "dispute") {
+                navigate("/disputes");
             }
         } else {
             // Navigate to list category page for category items

@@ -3,34 +3,27 @@ import MainHeader from '../../components/MainHeader';
 import { useNavigate } from 'react-router-dom';
 import TopMenu from '../../components/TopMenu';
 import SubMenu from '../../components/SubMenu';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const TotalSell = () => {
-    const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
-  const [sellerProducts, setSellerProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
+  const [orderItems, setOrderItems] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [expandedItems, setExpandedItems] = useState({}); // State để mở rộng/thu gọn chi tiết
+  const [timeFilter, setTimeFilter] = useState('all'); // 'all', 'week', 'month', 'year'
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userData = localStorage.getItem('currentUser');
-        if (userData) setLoggedInUser(JSON.parse(userData));
-
-        const [productsResponse, sellerResponse, ordersResponse, usersResponse] = await Promise.all([
-          fetch('http://localhost:9999/products'),
-          fetch('http://localhost:9999/sellerProduct'),
-          fetch('http://localhost:9999/orders'),
-          fetch('http://localhost:9999/user'),
-        ]);
-
-        setProducts(await productsResponse.json());
-        setSellerProducts(await sellerResponse.json());
-        setOrders(await ordersResponse.json());
-        setUsers(await usersResponse.json());
+        if (userData) {
+          setLoggedInUser(JSON.parse(userData));
+          fetch(`http://localhost:5000/api/orderItems/statistic/${JSON.parse(userData).id}`)
+            .then(response => response.json())
+            .then(data => {
+              setOrderItems(data);
+            });
+        }
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -40,96 +33,152 @@ const TotalSell = () => {
     fetchData();
   }, []);
 
-  const getSellerProductIds = () => {
-    if (!loggedInUser) return [];
-    const userSeller = sellerProducts.find((seller) => seller.userId === loggedInUser.id);
-    return userSeller?.products
-      .filter((sp) => sp.status === 'Active' || sp.status === 'available')
-      .map((sp) => sp.idProduct) || [];
+  // Statistics calculation functions
+  const calculateTotalRevenue = (items) => {
+    return items.reduce((total, item) => {
+      return total + (item.productId.price * item.quantity);
+    }, 0);
   };
 
-  const calculateRevenueAndCustomers = () => {
-    if (!products.length || !sellerProducts.length || !orders.length || !users.length || !loggedInUser) {
-      return { totalRevenue: 0, customers: [] };
-    }
-
-    const sellerProductIds = getSellerProductIds();
-    if (!sellerProductIds.length) return { totalRevenue: 0, customers: [] };
-
-    let totalRevenue = 0;
-    const customers = new Set();
-
-    users.forEach((user) => {
-      user.order_id.forEach((orderId) => {
-        const order = orders.find((o) => o.order_id === orderId);
-        if (order) {
-          order.items.forEach((item) => {
-            const product = products.find((p) => p.title === item.product_name);
-            if (product && sellerProductIds.includes(product.id)) {
-              totalRevenue += item.price * item.quantity;
-              customers.add(user.fullname);
-            }
-          });
-        }
-      });
-    });
-
-    return { totalRevenue, customers: Array.from(customers) };
+  const countUniqueCustomers = (items) => {
+    const uniqueCustomerIds = new Set(
+      items.map(item => item.orderId.buyerId._id)
+    );
+    return uniqueCustomerIds.size;
   };
 
-  const getRevenueItems = () => {
-    if (!products.length || !sellerProducts.length || !orders.length || !users.length || !loggedInUser) return [];
-
-    const sellerProductIds = getSellerProductIds();
-    if (!sellerProductIds.length) return [];
-
-    const rawItems = [];
-    users.forEach((user) => {
-      user.order_id.forEach((orderId) => {
-        const order = orders.find((o) => o.order_id === orderId);
-        if (order) {
-          order.items.forEach((item) => {
-            const product = products.find((p) => p.title === item.product_name);
-            if (product && sellerProductIds.includes(product.id)) {
-              rawItems.push({
-                name: item.product_name,
-                amount: item.price * item.quantity,
-                quantity: item.quantity,
-                customer: user.fullname,
-                orderId: order.order_id,
-                orderDate: order.order_date,
-              });
-            }
-          });
-        }
-      });
-    });
-
-    rawItems.sort((a, b) => new Date(a.orderDate) - new Date(b.orderDate) || a.orderId.localeCompare(b.orderId));
-
-    const productMap = new Map();
-    rawItems.forEach((item) => {
-      if (!productMap.has(item.name)) {
-        productMap.set(item.name, {
-          name: item.name,
-          totalAmount: item.amount,
-          totalQuantity: item.quantity,
-          purchases: [{ ...item }],
-        });
+  const revenueByCategory = (items) => {
+    const categoryRevenue = {};
+    
+    items.forEach(item => {
+      const categoryName = item.productId.categoryId.name;
+      const itemRevenue = item.productId.price * item.quantity;
+      
+      if (categoryRevenue[categoryName]) {
+        categoryRevenue[categoryName] += itemRevenue;
       } else {
-        const existing = productMap.get(item.name);
-        existing.totalAmount += item.amount;
-        existing.totalQuantity += item.quantity;
-        existing.purchases.push({ ...item });
+        categoryRevenue[categoryName] = itemRevenue;
       }
     });
-
-    return Array.from(productMap.values());
+    
+    return Object.entries(categoryRevenue).map(([name, value]) => ({
+      name,
+      value
+    }));
   };
 
-  const toggleItemExpansion = (itemName) => {
-    setExpandedItems((prev) => ({ ...prev, [itemName]: !prev[itemName] }));
+  const salesByProduct = (items) => {
+    const productSales = {};
+    
+    items.forEach(item => {
+      const productId = item.productId._id;
+      const productTitle = item.productId.title;
+      
+      if (productSales[productId]) {
+        productSales[productId].quantity += item.quantity;
+        productSales[productId].revenue += item.productId.price * item.quantity;
+      } else {
+        productSales[productId] = {
+          title: productTitle,
+          quantity: item.quantity,
+          revenue: item.productId.price * item.quantity
+        };
+      }
+    });
+    
+    return Object.entries(productSales)
+      .map(([id, data]) => ({
+        id,
+        name: data.title,
+        quantity: data.quantity,
+        revenue: data.revenue
+      }))
+      .sort((a, b) => b.revenue - a.revenue);
   };
+
+  // New function: Shipping Destinations
+  const shippingDestinations = (items) => {
+    const cityData = {};
+    
+    items.forEach(item => {
+      const city = item.orderId.addressId.city;
+      const itemRevenue = item.productId.price * item.quantity;
+      
+      if (cityData[city]) {
+        cityData[city].count += 1;
+        cityData[city].revenue += itemRevenue;
+      } else {
+        cityData[city] = {
+          count: 1,
+          revenue: itemRevenue
+        };
+      }
+    });
+    
+    return Object.entries(cityData)
+      .map(([name, data]) => ({
+        name,
+        value: data.revenue,
+        count: data.count
+      }))
+      .sort((a, b) => b.value - a.value);
+  };
+
+  const revenueByDate = (items) => {
+    const dateRevenue = {};
+    
+    items.forEach(item => {
+      const orderDate = new Date(item.orderId.orderDate).toISOString().split('T')[0];
+      const itemRevenue = item.productId.price * item.quantity;
+      
+      if (dateRevenue[orderDate]) {
+        dateRevenue[orderDate] += itemRevenue;
+      } else {
+        dateRevenue[orderDate] = itemRevenue;
+      }
+    });
+    
+    return Object.entries(dateRevenue)
+      .map(([date, revenue]) => ({
+        date,
+        revenue
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+  };
+
+  // Filter data based on time selection
+  const getFilteredData = () => {
+    if (timeFilter === 'all' || orderItems.length === 0) return orderItems;
+    
+    const now = new Date();
+    let startDate;
+    
+    if (timeFilter === 'week') {
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - 7);
+    } else if (timeFilter === 'month') {
+      startDate = new Date(now);
+      startDate.setMonth(now.getMonth() - 1);
+    } else if (timeFilter === 'year') {
+      startDate = new Date(now);
+      startDate.setFullYear(now.getFullYear() - 1);
+    }
+    
+    return orderItems.filter(item => {
+      const orderDate = new Date(item.orderId.orderDate);
+      return orderDate >= startDate;
+    });
+  };
+
+  const filteredData = getFilteredData();
+  const totalRevenue = calculateTotalRevenue(filteredData);
+  const uniqueCustomers = countUniqueCustomers(filteredData);
+  const productData = salesByProduct(filteredData);
+  const categoryData = revenueByCategory(filteredData);
+  const destinationData = shippingDestinations(filteredData);
+  const timeData = revenueByDate(filteredData);
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
   if (loading) return <div className="text-center p-4">Loading data...</div>;
 
@@ -146,9 +195,6 @@ const TotalSell = () => {
     );
   }
 
-  const { totalRevenue, customers } = calculateRevenueAndCustomers();
-  const revenueItems = getRevenueItems();
-
   return (
     <div id="MainLayout" className="min-w-[1050px] max-w-[1300px] mx-auto">
       <TopMenu />
@@ -156,95 +202,146 @@ const TotalSell = () => {
       <SubMenu />
       <div className="mt-4">
         <div className="bg-white border rounded-lg p-6 shadow-md">
-        <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-800">
-              Sales Overview (Seller: {loggedInUser.fullname})
+              Shipped Items Overview (Seller: {loggedInUser.fullname || loggedInUser.username})
             </h3>
-            <button
-              onClick={() => navigate('/sellerProduct')} // Add navigation button
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Quản lý sản phẩm
-            </button>
-          </div>
-
-          {/* Tổng doanh thu và khách hàng */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
-            <div>
-              <p className="text-gray-500 text-sm">Total Revenue</p>
-              <p className="text-2xl font-bold text-green-600">${totalRevenue.toFixed(2)}</p>
+            <div className="flex gap-4">
+              <select 
+                className="px-3 py-2 border rounded"
+                value={timeFilter}
+                onChange={(e) => setTimeFilter(e.target.value)}
+              >
+                <option value="all">All Time</option>
+                <option value="week">Last Week</option>
+                <option value="month">Last Month</option>
+                <option value="year">Last Year</option>
+              </select>
+              <button
+                onClick={() => navigate('/products')}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Quản lý sản phẩm
+              </button>
             </div>
-            <div>
-              <p className="text-gray-500 text-sm">Unique Customers</p>
-              <p className="text-lg text-gray-700">
-                {customers.length} ({customers.join(', ') || 'None'})
+          </div>
+          
+          {/* Summary Cards */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+              <h4 className="text-blue-700 font-medium">Total Revenue (Shipped)</h4>
+              <p className="text-2xl font-bold">${totalRevenue.toLocaleString()}</p>
+            </div>
+            <div className="bg-green-50 p-4 rounded-lg border border-green-100">
+              <h4 className="text-green-700 font-medium">Unique Customers</h4>
+              <p className="text-2xl font-bold">{uniqueCustomers}</p>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+              <h4 className="text-purple-700 font-medium">Products Shipped</h4>
+              <p className="text-2xl font-bold">
+                {[...new Set(filteredData.map(item => item.productId._id))].length}
               </p>
             </div>
           </div>
-
-          {/* Danh sách sản phẩm đã bán */}
-          <div>
-            <h4 className="text-lg font-medium text-gray-700 mb-3">Sold Items</h4>
-            {revenueItems.length === 0 ? (
-              <p className="text-gray-500">No items sold yet.</p>
-            ) : (
-              <div className="space-y-4">
-                {revenueItems.map((item, index) => (
-                  <div key={index} className="border rounded-lg p-4 bg-gray-50">
-                    <div
-                      className="flex justify-between items-center cursor-pointer"
-                      onClick={() => toggleItemExpansion(item.name)}
+          
+          {/* Charts Row */}
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            {/* Category Distribution */}
+            <div className="border rounded-lg p-4">
+              <h4 className="text-lg font-medium mb-2">Revenue by Category</h4>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                     >
-                      <span className="font-medium text-gray-800">{item.name}</span>
-                      <div className="flex items-center space-x-4">
-                        <span className="text-green-600 font-semibold">${item.totalAmount.toFixed(2)}</span>
-                        <span className="text-gray-500">Qty: {item.totalQuantity}</span>
-                        <span className="text-blue-500">
-                          {expandedItems[item.name] ? 'Hide Details' : 'Show Details'}
-                        </span>
-                      </div>
-                    </div>
-                    {expandedItems[item.name] && (
-                      <div className="mt-3">
-                        <table className="w-full text-sm text-gray-600">
-                          <thead>
-                            <tr className="border-b">
-                              <th className="text-left py-2">Customer</th>
-                              <th className="text-left py-2">Order ID</th>
-                              <th className="text-left py-2">Date</th>
-                              <th className="text-right py-2">Quantity</th>
-                              <th className="text-right py-2">Amount</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {item.purchases.map((purchase, idx) => (
-                              <tr key={idx} className="border-b last:border-b-0">
-                                <td className="py-2">{purchase.customer}</td>
-                                <td className="py-2">{purchase.orderId}</td>
-                                <td className="py-2">
-                                  {new Date(purchase.orderDate).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric',
-                                  })}
-                                </td>
-                                <td className="text-right py-2">{purchase.quantity}</td>
-                                <td className="text-right py-2">${purchase.amount.toFixed(2)}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      {categoryData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-            )}
+            </div>
+            
+            {/* Top Shipping Destinations */}
+            <div className="border rounded-lg p-4">
+              <h4 className="text-lg font-medium mb-2">Top Shipping Destinations</h4>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={destinationData.slice(0, 6)}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {destinationData.slice(0, 6).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value, name, props) => [`$${value.toLocaleString()}`, props.payload.name]} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-
-          <a href="#" className="text-blue-500 text-sm mt-4 inline-block hover:underline">
-            View Full Sales Report
-          </a>
+          
+          {/* Revenue Over Time */}
+          <div className="border rounded-lg p-4 mb-6">
+            <h4 className="text-lg font-medium mb-2">Revenue Over Time</h4>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={timeData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+                  <Legend />
+                  <Bar dataKey="revenue" fill="#8884d8" name="Revenue" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          
+          {/* Product Table */}
+          <div className="border rounded-lg p-4">
+            <h4 className="text-lg font-medium mb-2">Top Products</h4>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="py-2 px-4 text-left">Product</th>
+                    <th className="py-2 px-4 text-left">Quantity Sold</th>
+                    <th className="py-2 px-4 text-left">Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productData.slice(0, 5).map((product) => (
+                    <tr key={product.id} className="border-t">
+                      <td className="py-2 px-4">{product.name}</td>
+                      <td className="py-2 px-4">{product.quantity}</td>
+                      <td className="py-2 px-4">${product.revenue.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

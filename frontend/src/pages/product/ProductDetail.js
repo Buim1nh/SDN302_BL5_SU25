@@ -111,7 +111,7 @@ useEffect(() => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <img
-              src={product.images?.[0] || "https://picsum.photos/id/250/300"}
+              src={product.image || "photo.png"}
               alt={product.title}
               className="w-full h-80 object-cover mb-4"
             />
@@ -123,7 +123,6 @@ useEffect(() => {
             </p>
 
             <p className="text-md text-gray-600 mt-2">Category: {product.categoryId?.name || "N/A"}</p>
-            <p className="text-md text-gray-600 mt-2">Seller: {product.sellerId?.name || "N/A"}</p>
             <p className="text-md text-gray-600 mt-2">Quantity: {product.quantity}</p>
             <p className="text-md text-gray-600 mt-2">Description: {product.description || "No description available."}</p>
 

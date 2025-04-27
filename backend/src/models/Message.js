@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const messageSchema = new Schema(
+const MessageSchema = new mongoose.Schema(
   {
-    senderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    receiverId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    receiverId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     content: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now },
+    repliedTo: { type: mongoose.Schema.Types.ObjectId, ref: "Message", default: null }, // Để lưu ID của tin nhắn gốc nếu là phản hồi
+    createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Message", messageSchema);
+module.exports = mongoose.model("Message", MessageSchema);

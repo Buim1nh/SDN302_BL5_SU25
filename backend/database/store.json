@@ -7,7 +7,11 @@
   },
   "storeName": "Store 1",
   "description": "Store 1 description",
-  "bannerImageURL": "https://picsum.photos/id/1/500"
+  "bannerImageURL": "https://picsum.photos/id/1/500",
+  "status": "approved",
+  "updatedAt": {
+    "$date": "2025-04-23T16:59:49.366Z"
+  }
 },
 {
   "_id": {
@@ -18,7 +22,11 @@
   },
   "storeName": "Store 2",
   "description": "Store 2 description",
-  "bannerImageURL": "https://picsum.photos/id/2/500"
+  "bannerImageURL": "https://picsum.photos/id/2/500",
+  "status": "approved",
+  "updatedAt": {
+    "$date": "2025-04-23T16:59:50.038Z"
+  }
 },
 {
   "_id": {
@@ -29,5 +37,9 @@
   },
   "storeName": "Store 3",
   "description": "Store 3 description",
-  "bannerImageURL": "https://picsum.photos/id/3/500"
+  "bannerImageURL": "https://picsum.photos/id/3/500",
+  "status": "approved",
+  "updatedAt": {
+    "$date": "2025-04-23T16:59:50.781Z"
+  }
 }]

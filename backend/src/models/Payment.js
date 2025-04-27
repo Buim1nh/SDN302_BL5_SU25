@@ -6,14 +6,11 @@ const paymentSchema = new Schema(
     orderId: { type: Schema.Types.ObjectId, ref: "Order", required: true },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     amount: { type: Number, required: true },
-    method: {
-      type: String,
-      enum: ["credit_card", "paypal", "bank_transfer", "other"],
-      required: true,
-    },
+    method: { type: String, required: true },
     status: {
       type: String,
-      enum: ["pending", "completed", "failed", "refunded"],
+      required: true,
+      enum: ["pending", "paid", "failed"],
       default: "pending",
     },
     paidAt: { type: Date },

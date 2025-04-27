@@ -4,9 +4,10 @@ const Schema = mongoose.Schema;
 const bidSchema = new Schema(
   {
     productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
-    bidderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    amount: { type: Number, required: true },
-    bidTime: { type: Date, default: Date.now },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    bidAmount: { type: Number, required: true },
+    bidDate: { type: Date, default: Date.now },
+    isWinningBid: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
