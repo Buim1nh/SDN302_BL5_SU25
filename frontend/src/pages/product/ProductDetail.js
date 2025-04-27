@@ -10,6 +10,7 @@ export default function ProductDetail() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editData, setEditData] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -31,6 +32,21 @@ export default function ProductDetail() {
 
     fetchProduct();
   }, [id]);
+  const [reviews, setReviews] = useState([]);
+
+useEffect(() => {
+  const fetchReviews = async () => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/reviews/product/${id}`);
+      setReviews(res.data);
+    } catch (err) {
+      console.error("Failed to fetch reviews", err);
+    }
+  };
+
+  fetchReviews();
+}, [id]);
+
 
   const handleEdit = () => setShowEditModal(true);
 
@@ -83,7 +99,7 @@ export default function ProductDetail() {
           </a>
           <div className="w-full max-w-md">
             <div className="relative">
-              
+
             </div>
           </div>
         </nav>
@@ -101,7 +117,11 @@ export default function ProductDetail() {
             />
           </div>
           <div>
-            <p className="text-lg font-semibold">Price: £{(product.price / 100).toFixed(2)}</p>
+            {/* PRICE HIỂN THỊ (ở dưới hình ảnh) */}
+            <p className="text-lg font-semibold">
+              Price: ${((product.price || 0) / 100)}
+            </p>
+
             <p className="text-md text-gray-600 mt-2">Category: {product.categoryId?.name || "N/A"}</p>
             <p className="text-md text-gray-600 mt-2">Seller: {product.sellerId?.name || "N/A"}</p>
             <p className="text-md text-gray-600 mt-2">Quantity: {product.quantity}</p>
@@ -109,11 +129,51 @@ export default function ProductDetail() {
 
             <div className="mt-4 space-x-4">
               <button onClick={handleEdit} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Edit</button>
-              <button onClick={handleHide} className="bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600">Hide</button>
-              <button onClick={handleDelete} className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">Delete</button>
+
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+              {showDeleteModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white p-6 rounded-md w-[90%] max-w-md shadow-lg">
+                    <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
+                    <p className="mb-6 text-gray-700">Are you sure you want to delete this product?</p>
+                    <div className="flex justify-end space-x-3">
+                      <button onClick={() => setShowDeleteModal(false)} className="bg-gray-400 px-4 py-2 rounded">Cancel</button>
+                      <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Yes, Delete</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
             </div>
           </div>
         </div>
+        {/* USER REVIEWS */}
+<div className="mt-12">
+  <h2 className="text-2xl font-bold mb-4">User Reviews</h2>
+  {reviews.length === 0 ? (
+    <p className="text-gray-500">No reviews yet.</p>
+  ) : (
+    <div className="space-y-4">
+      {reviews.map((review) => (
+        <div key={review._id} className="border rounded p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-semibold">{review.reviewerId?.fullname || review.reviewerId?.username || "Anonymous"}</span>
+            <span className="text-yellow-500">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
+          </div>
+          <p className="text-sm text-gray-700">{review.comment || "No comment."}</p>
+          <p className="text-xs text-gray-400 mt-1">{new Date(review.createdAt).toLocaleString()}</p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
 
         {/* EDIT MODAL */}
         {showEditModal && (
