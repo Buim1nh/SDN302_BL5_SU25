@@ -218,7 +218,7 @@ const TotalSell = () => {
                 <option value="year">Last Year</option>
               </select>
               <button
-                onClick={() => navigate('/sellerProduct')}
+                onClick={() => navigate('/products')}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 Quản lý sản phẩm
@@ -239,7 +239,7 @@ const TotalSell = () => {
             <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
               <h4 className="text-purple-700 font-medium">Products Shipped</h4>
               <p className="text-2xl font-bold">
-                {filteredData.reduce((acc, item) => acc + item.quantity, 0)}
+                {[...new Set(filteredData.map(item => item.productId._id))].length}
               </p>
             </div>
           </div>

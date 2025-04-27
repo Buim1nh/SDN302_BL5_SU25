@@ -136,7 +136,7 @@ export default function ProductList() {
                               className="flex items-center justify-between w-full cursor-pointer hover:bg-gray-200 p-1 px-2"
                             >
                               <div className="truncate ml-2">{product.title}</div>
-                              <div className="truncate">£{(product.price / 100).toFixed(2)}</div>
+                              <div className="truncate">${(product.price / 100)}</div>
                             </Link>
                           </div>
                         ))
@@ -175,7 +175,7 @@ export default function ProductList() {
                   className="w-full h-40 object-cover mb-2"
                 />
                 <h2 className="font-semibold text-sm">{product.title}</h2>
-                <p className="text-gray-600 text-sm">£{(product.price / 100).toFixed(2)}</p>
+                <p className="text-gray-600 text-sm">${(product.price / 100)}</p>
                 <p className="text-xs text-gray-500">{product.quantity} available</p>
               </Link>
             ))

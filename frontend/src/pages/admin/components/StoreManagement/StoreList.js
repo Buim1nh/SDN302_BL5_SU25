@@ -54,7 +54,7 @@ const StoreList = ({ stores, onApprove, onReject, currentPage, itemsPerPage }) =
               .map((store) => (
                 <tr key={store._id}>
                   <td className="px-6 py-4 whitespace-nowrap">{store.storeName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{store.sellerId.username}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{store.sellerId?.username || store.sellerId?.fullname || "N/A"}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(store.status)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {store.status === "pending" && (

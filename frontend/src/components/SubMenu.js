@@ -11,7 +11,8 @@ export default function SubMenu() {
         { id: "home", name: "Home", isStatic: true },
         { id: "saved", name: "Saved", isStatic: true },
         { id: "sell", name: "Sell", isStatic: true },
-        {id: "product", name: "Your Product", isStatic: true},
+        { id: "product", name: "Your Product", isStatic: true },
+        { id: "inventory", name: "Inventories", isStatic: true },
         { id: "dispute", name: "Manage Dispute", isStatic: true }
     ];
 
@@ -21,7 +22,7 @@ export default function SubMenu() {
             try {
                 const response = await fetch("http://localhost:9999/categories");
                 const data = await response.json();
-                
+
                 // Combine static items with categories from API
                 const allItems = [
                     staticMenuItems[0],
@@ -29,7 +30,7 @@ export default function SubMenu() {
                     ...data,
                     staticMenuItems[2]
                 ];
-                
+
                 setCategories(allItems);
                 setLoading(false);
             } catch (error) {
@@ -51,9 +52,13 @@ export default function SubMenu() {
                 navigate("/");
             } else if (item.id === "product") {
                 navigate("/products");
-            } else if (item.id === "dispute") {
-                navigate("/disputes");
             }
+            else if (item.id === "inventory") {
+                navigate("/inventory");
+            }
+        } else if (item.id === "dispute") {
+            navigate("/disputes");
+
         } else {
             // Navigate to list category page for category items
             navigate(`/list-category/${item.id}`);
@@ -64,7 +69,7 @@ export default function SubMenu() {
         <>
             <div id="SubMenu" className="border-b">
                 <div className="flex items-center justify-between w-full mx-auto max-w-[1200px]">
-                    <ul 
+                    <ul
                         id="TopMenuLeft"
                         className="
                             flex 
@@ -80,8 +85,8 @@ export default function SubMenu() {
                             <li className="px-3">Loading...</li>
                         ) : (
                             categories.map(item => (
-                                <li 
-                                    key={item.id} 
+                                <li
+                                    key={item.id}
                                     className="px-3 hover:underline cursor-pointer whitespace-nowrap"
                                     onClick={() => handleMenuClick(item)}
                                 >
