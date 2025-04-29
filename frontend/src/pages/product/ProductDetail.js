@@ -90,10 +90,7 @@ useEffect(() => {
       {/* HEADER */}
       <div className="border-b bg-white sticky top-0 z-40">
         <nav className="flex items-center justify-between max-w-[1200px] mx-auto py-5 px-3">
-          <Link to="/products" className="flex items-center gap-2 text-blue-600 hover:underline">
-            <ArrowLeft size={20} />
-            <span>Back to Products</span>
-          </Link>
+          
           <a href="/">
             <img width="120" src="/images/logo.svg" alt="Logo" />
           </a>

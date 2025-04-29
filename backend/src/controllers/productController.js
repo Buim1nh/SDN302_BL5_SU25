@@ -119,46 +119,87 @@ exports.getProductsBySellerId = async (req, res) => {
     // Tìm tất cả các sản phẩm của sellerId
     const products = await Product.find({ sellerId }).lean();
 
-    // Thêm thông tin tồn kho (nếu có) vào từng sản phẩm
-    const withInventory = await Promise.all(
-      products.map(async (product) => {
-        const inventory = await Inventory.findOne({ productId: product._id }).lean();
-        return { ...product, quantity: inventory?.quantity || 0 };
-      })
-    );
+    // Nếu không có sản phẩm nào được tìm thấy, trả về mảng rỗng
+    if (!products.length) {
+      return res.json([]);
+    }
 
+    // Lấy tất cả thông tin tồn kho liên quan đến danh sách sản phẩm
+    const productIds = products.map((product) => product._id);
+    const inventories = await Inventory.find({ productId: { $in: productIds } }).lean();
+
+    // Tạo một map để ánh xạ nhanh productId -> quantity
+    const inventoryMap = inventories.reduce((map, inventory) => {
+      map[inventory.productId.toString()] = inventory.quantity;
+      return map;
+    }, {});
+
+    // Thêm thông tin tồn kho (quantity) vào từng sản phẩm
+    const withInventory = products.map((product) => ({
+      ...product,
+      quantity: inventoryMap[product._id.toString()] || 0, // Nếu không có tồn kho, đặt quantity = 0
+    }));
+
+    // Trả về danh sách sản phẩm kèm tồn kho
     res.json(withInventory);
   } catch (err) {
+    console.error("Error fetching products by sellerId:", err);
     res.status(500).json({ error: err.message });
   }
 };
 
 // Lịch sử mua hàng
-exports.getPurchasedProductsByBuyerId = async (req, res) => {
+exports.getPurchasedOrdersByBuyerId = async (req, res) => {
   try {
     const { buyerId } = req.params;
 
     // Tìm tất cả các đơn hàng của buyerId
-    const orders = await Order.find({ buyerId }, '_id').lean();
+    const orders = await Order.find({ buyerId }, '_id orderDate addressId status').lean();
+
+    // Lấy danh sách orderIds từ các đơn hàng
     const orderIds = orders.map((order) => order._id);
 
     // Lấy danh sách OrderItems từ các đơn hàng
-    const orderItems = await OrderItem.find({ orderId: { $in: orderIds } }, '_id productId quantity unitPrice').lean();
+    const orderItems = await OrderItem.find({ orderId: { $in: orderIds } }, '_id orderId productId quantity unitPrice').lean();
 
     // Lấy thông tin chi tiết sản phẩm
     const productIds = orderItems.map((item) => item.productId);
-    const products = await Product.find({ _id: { $in: productIds } }, '_id title price images categoryId').lean();
+    const products = await Product.find({ _id: { $in: productIds } }, '_id title image price').lean();
 
-    // Kết hợp thông tin sản phẩm với OrderItems
-    const purchasedProducts = orderItems.map((item) => {
-      const product = products.find((p) => p._id.toString() === item.productId.toString());
+    // Xây dựng danh sách các đơn hàng với thông tin cần thiết
+    const purchasedOrders = orders.map((order) => {
+      // Lấy tất cả OrderItems thuộc về Order này
+      const items = orderItems.filter((item) => item.orderId.toString() === order._id.toString());
+
+      // Lấy thông tin chi tiết sản phẩm cho mỗi OrderItem
+      const productsWithDetails = items.map((item) => {
+        const product = products.find((p) => p._id.toString() === item.productId.toString());
+        return {
+          ...item,
+          product,
+        };
+      });
+
+      // Tính tổng quantity và tổng price cho đơn hàng
+      const totalQuantity = productsWithDetails.reduce((sum, item) => sum + item.quantity, 0);
+      const totalPrice = productsWithDetails.reduce((sum, item) => sum + item.quantity * (item.unitPrice || item.product.price), 0);
+
+      // Lấy hình ảnh đầu tiên (image) từ sản phẩm đầu tiên
+      const firstImage = productsWithDetails.length > 0 ? productsWithDetails[0].product.images : null;
+
       return {
-        ...item,
-        product,
+        orderId: order._id,
+        orderDate: order.orderDate,
+        addressId: order.addressId,
+        status: order.status,
+        totalQuantity,
+        totalPrice,
+        image: firstImage, // Hình ảnh đầu tiên của Order
+        items: productsWithDetails, // Danh sách sản phẩm của Order (nếu cần chi tiết)
       };
     });
 
-    res.json(purchasedProducts);
+    res.json(purchasedOrders); // Trả về danh sách các đơn hàng
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -249,5 +290,62 @@ exports.getTotalQuantityOnSale = async (req, res) => {
     res.json({ totalDistinctProducts });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+exports.toggleAuctionStatus = async (req, res) => {
+  try {
+    const { idProduct } = req.params; // Lấy ID sản phẩm từ URL
+    const { isAuction } = req.body; // Trạng thái đấu giá từ body request
+
+    // Kiểm tra xem sản phẩm có tồn tại không
+    const product = await Product.findById(idProduct);
+    if (!product) {
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm." });
+    }
+
+    // Cập nhật trạng thái đấu giá
+    product.isAuction = isAuction;
+    await product.save();
+
+    // Trả về sản phẩm cập nhật
+    res.status(200).json({
+      message: `Trạng thái đấu giá đã được cập nhật thành công.`,
+      product,
+    });
+  } catch (err) {
+    console.error("Error updating auction status:", err);
+    res.status(500).json({ message: "Đã xảy ra lỗi khi cập nhật trạng thái đấu giá." });
+  }
+};
+exports.addProduct = async (req, res) => {
+  try {
+    const { title, description, price, image, isAuction,sellerId} = req.body;
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!title || !description || price == null) {
+      return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin sản phẩm." });
+    }
+
+    // Tạo sản phẩm mới
+    const newProduct = new Product({
+      title,
+      description,
+      price,
+      image,
+      isAuction: isAuction || false, 
+      sellerId// Giá trị mặc định là false nếu không được cung cấp
+    });
+
+    // Lưu sản phẩm vào cơ sở dữ liệu
+    const savedProduct = await newProduct.save();
+
+    res.status(201).json({
+      message: "Sản phẩm đã được thêm thành công.",
+      product: savedProduct,
+    });
+  } catch (err) {
+    console.error("Error adding product:", err);
+    res.status(500).json({ message: "Đã xảy ra lỗi khi thêm sản phẩm." });
   }
 };

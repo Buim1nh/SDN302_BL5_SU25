@@ -158,49 +158,7 @@ const Activity = ({ userRole }) => {
                   Xem tất cả <FaArrowRight className="ml-1" size={12} />
                 </button>
               </div>
-              <div className="p-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-4">
-                        <FaShoppingBag className="text-gray-500" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">Tai nghe Bluetooth Sony</h3>
-                        <p className="text-sm text-gray-500">Đã nhận: 15/03/2025</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">$89.99</p>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <FaCheckCircle className="mr-1" size={10} /> Hoàn thành
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-4">
-                        <FaShoppingBag className="text-gray-500" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">Bàn phím cơ Logitech</h3>
-                        <p className="text-sm text-gray-500">Đang giao: 22/03/2025</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">$129.99</p>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        <FaRegClock className="mr-1" size={10} /> Đang giao
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-gray-500 text-sm mt-4">
-                  Xem lại các đơn hàng đã mua và theo dõi trạng thái giao hàng.
-                </p>
-              </div>
+              
             </div>
 
             {/* Selling - Only show for sellers */}
@@ -218,79 +176,7 @@ const Activity = ({ userRole }) => {
                     Quản lý sản phẩm <FaArrowRight className="ml-1" size={12} />
                   </button>
                 </div>
-                <div className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-blue-700">Đang bán</h3>
-                        <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                          1
-                        </span>
-                      </div>
-                      <ul className="space-y-2">
-                        <li className="p-2 bg-white rounded border border-blue-100">
-                          <p className="font-medium">Máy ảnh Canon EOS</p>
-                          <div className="flex justify-between items-center mt-1">
-                            <span className="text-blue-600 font-semibold">$450.00</span>
-                            <span className="text-xs text-gray-500">Còn 3 ngày</span>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-green-700">Đã bán</h3>
-                        <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                          1
-                        </span>
-                      </div>
-                      <ul className="space-y-2">
-                        <li className="p-2 bg-white rounded border border-green-100">
-                          <p className="font-medium">Áo khoác da</p>
-                          <div className="flex justify-between items-center mt-1">
-                            <span className="text-green-600 font-semibold">$120.00</span>
-                            <span className="text-xs text-gray-500">20/03/2025</span>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="bg-red-50 p-4 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-red-700">Chưa thanh toán</h3>
-                        <span className="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                          1
-                        </span>
-                      </div>
-                      <ul className="space-y-2">
-                        <li className="p-2 bg-white rounded border border-red-100">
-                          <p className="font-medium">Đồng hồ thông minh</p>
-                          <div className="flex justify-between items-center mt-1">
-                            <span className="text-red-600 font-semibold">$200.00</span>
-                            <span className="text-xs text-red-500">Chưa thanh toán</span>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div>
-                      <h3 className="font-medium">Tổng doanh thu</h3>
-                      <p className="text-sm text-gray-500">Từ trước đến nay</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-green-600">${totalRevenue}</p>
-                      <button
-                        onClick={() => navigate("/totalSell")}
-                        className="text-blue-500 hover:text-blue-700 text-sm"
-                      >
-                        Xem chi tiết
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                
               </div>
             )}
           </div>

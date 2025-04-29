@@ -10,7 +10,6 @@ const productSchema = new Schema(
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
     },
     sellerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     isAuction: { type: Boolean, default: false },
